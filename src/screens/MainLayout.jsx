@@ -4,7 +4,6 @@ import { useShallow } from 'zustand/react/shallow';
 import useGameStore from '../store/gameStore';
 import TopStats from '../components/TopStats';
 import BottomNav from '../components/BottomNav';
-import OpportunityModal from '../components/OpportunityModal';
 import { calculateHoldingsValue, calculatePassiveIncome } from '../domain/finance';
 import styles from './MainLayout.module.css';
 
@@ -73,7 +72,6 @@ function MainLayout() {
       <main className={styles.content}>
         <Outlet />
       </main>
-      <OpportunityModal />
       <BottomNav current={location.pathname} onChange={navigate} />
     </div>
   );

@@ -5,6 +5,19 @@
   padding-bottom: 6rem;
 }
 
+.eventCard {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fefefe;
+}
+
+.eventTitle {
+  margin: 0 0 0.2rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
 .grid {
   display: flex;
   flex-direction: column;
@@ -30,6 +43,41 @@
   font-size: 0.8rem;
   color: #c04660;
   font-weight: 600;
+}
+
+.placeholder {
+  margin: 0;
+  color: rgba(9, 12, 24, 0.6);
+}
+
+.creditCard {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.creditHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.creditHeader span {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.6;
+}
+
+.creditHeader strong {
+  font-size: 1.3rem;
+  color: #0b1128;
+}
+
+.creditActions {
+  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
 }
 
 .actionIcon {
@@ -73,31 +121,4 @@
 
 .lastTurn strong {
   font-size: 1.2rem;
-}
-
-.logList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.logItem {
-  padding: 0.8rem 1rem;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.65);
-}
-
-.logItem span {
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
-
-.logItem p {
-  margin: 0.2rem 0 0;
-  font-weight: 600;
-}
-
-.placeholder {
-  margin: 0;
-  color: rgba(9, 12, 24, 0.6);
 }

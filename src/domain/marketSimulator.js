@@ -1,8 +1,10 @@
 import {
   buildMatrixFromObject,
   choleskyDecomposition,
+  ensureSeed,
   generateCorrelatedNormals,
   normalWithParams,
+  seedFromString,
   uniformFromSeed,
 } from './rng';
 
@@ -49,13 +51,35 @@ function rollShocks({ shockModel, month, seed, previousState = {} }) {
   return { impacts, seed: cursorSeed, nextState: stateCopy };
 }
 
-export function seedPriceState(instruments = []) {
+function buildSyntheticHistory(instrument, baseSeed, length = 18) {
+  const history = [];
+  const minPrice = Math.max(5, (instrument.initialPrice || 100) * 0.2);
+  let price = instrument.initialPrice || 100;
+  history.unshift({ month: 0, price });
+  let cursorSeed = ensureSeed(baseSeed + seedFromString(instrument.id));
+  for (let i = 1; i <= length; i += 1) {
+    const drift = (instrument.model?.muMonthly || 0) * 0.5;
+    const vol = Math.max(0.01, (instrument.model?.sigmaMonthly || 0.05) * 0.9);
+    const { value, seed: nextSeed } = normalWithParams(cursorSeed, drift, vol);
+    cursorSeed = nextSeed;
+    const bounded = clamp(value, -0.35, 0.35);
+    price = Math.max(price * Math.exp(bounded), minPrice);
+    history.unshift({ month: -i, price });
+  }
+  return history;
+}
+
+export function seedPriceState(instruments = [], seed) {
   const map = {};
-  instruments.forEach((instrument) => {
+  const baseSeed = ensureSeed(seed ?? Date.now());
+  instruments.forEach((instrument, index) => {
+    const history = buildSyntheticHistory(instrument, baseSeed + index * 97);
+    const prevPrice = history[history.length - 2]?.price || instrument.initialPrice;
+    const lastReturn = prevPrice ? instrument.initialPrice / prevPrice - 1 : 0;
     map[instrument.id] = {
       price: instrument.initialPrice,
-      history: [{ month: 0, price: instrument.initialPrice }],
-      lastReturn: 0,
+      history,
+      lastReturn,
     };
   });
   return map;

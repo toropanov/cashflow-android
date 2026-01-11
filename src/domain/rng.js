@@ -4,6 +4,15 @@ export function ensureSeed(value = Date.now()) {
   return (value >>> 0) % (UINT_MAX + 1);
 }
 
+export function seedFromString(input = '') {
+  const str = `${input}`;
+  let hash = 0;
+  for (let i = 0; i < str.length; i += 1) {
+    hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+  }
+  return ensureSeed(hash);
+}
+
 export function uniformFromSeed(seed) {
   let t = seed + 0x6d2b79f5;
   t = Math.imul(t ^ (t >>> 15), t | 1);

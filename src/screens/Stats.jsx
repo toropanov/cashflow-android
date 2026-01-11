@@ -4,6 +4,12 @@ import SparkLine from '../components/SparkLine';
 import { buildPortfolioSummary } from '../domain/finance';
 import styles from './Stats.module.css';
 
+const assetColors = {
+  STOCKS_US: ['#d7a6ff', '#73c9ff'],
+  CRYPTO: ['#ff9ada', '#6df6c4'],
+  BONDS_US: ['#b6f7b1', '#7ec9ff'],
+};
+
 function StatCard({ title, subtitle, data, accent }) {
   return (
     <Card className={styles.statCard}>
@@ -47,6 +53,12 @@ function Stats() {
   );
 
   const allocationRows = buildPortfolioSummary(investments, priceState, instruments);
+  const assetCharts = instruments.map((instrument) => ({
+    instrument,
+    id: instrument.id,
+    price: priceState[instrument.id]?.price || instrument.initialPrice,
+    history: priceState[instrument.id]?.history || [],
+  }));
 
   return (
     <div className={styles.screen}>
@@ -79,6 +91,23 @@ function Stats() {
           <Allocation rows={allocationRows} />
         </div>
       </Card>
+      <div className={styles.assetGrid}>
+        {assetCharts.map((asset) => {
+          const palette = assetColors[asset.id] || ['#c7d9ff', '#6ef3ff'];
+          return (
+            <Card key={asset.id} className={styles.assetCard}>
+              <div className={styles.assetHeader}>
+                <div>
+                  <p>{asset.instrument.type.toUpperCase()}</p>
+                  <h3>{asset.instrument.title}</h3>
+                </div>
+                <strong>${Math.round(asset.price).toLocaleString('en-US')}</strong>
+              </div>
+              <SparkLine data={asset.history} colorStart={palette[0]} colorStop={palette[1]} />
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 }

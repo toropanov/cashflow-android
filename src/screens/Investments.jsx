@@ -128,7 +128,6 @@ function Investments() {
   const cash = useGameStore((state) => state.cash);
   const buyInstrument = useGameStore((state) => state.buyInstrument);
   const sellInstrument = useGameStore((state) => state.sellInstrument);
-  const history = useGameStore((state) => state.history);
   const [trade, setTrade] = useState(null);
 
   const handleTrade = (instrument, mode) => {
@@ -160,39 +159,11 @@ function Investments() {
     [instruments, priceState, holdings],
   );
 
-  const netHistory = history?.netWorth || [];
-  const cashFlowHistory = history?.cashFlow || [];
-  const latestNetWorth = netHistory.length ? netHistory[netHistory.length - 1].value : 0;
-  const latestCashFlow = cashFlowHistory.length ? cashFlowHistory[cashFlowHistory.length - 1].value : 0;
-
   return (
     <div className={styles.screen}>
       <header>
         <h2>Инвестиционный холдинг</h2>
-        <p>Толстые линии, градиенты и полностью оффлайн симуляция.</p>
       </header>
-      <div className={styles.charts}>
-        <Card className={styles.chartCard}>
-          <div className={styles.chartHeader}>
-            <span>Стоимость портфеля</span>
-            <strong>
-              $
-              {Math.round(latestNetWorth).toLocaleString('en-US')}
-            </strong>
-          </div>
-          <SparkLine data={netHistory} />
-        </Card>
-        <Card className={styles.chartCard}>
-          <div className={styles.chartHeader}>
-            <span>Кэш-флоу</span>
-            <strong>
-              $
-              {Math.round(latestCashFlow).toLocaleString('en-US')}
-            </strong>
-          </div>
-          <SparkLine data={cashFlowHistory} colorStart="#ff97bc" colorStop="#6ee2ff" />
-        </Card>
-      </div>
       <div className={styles.list}>
         {cards.map((card) => (
           <InstrumentCard

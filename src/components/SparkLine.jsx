@@ -2,13 +2,26 @@ function SparkLine({ data = [], colorStart = '#9c6bff', colorStop = '#68e1fd' })
   if (!data.length) return null;
   const width = 280;
   const height = 120;
-  const values = data.map((point) => point.value);
+  const values = data.map((point) => {
+    if (typeof point === 'number') return point;
+    if (typeof point.value === 'number') return point.value;
+    if (typeof point.price === 'number') return point.price;
+    return 0;
+  });
   const min = Math.min(...values);
   const max = Math.max(...values);
   const range = max - min || 1;
   const points = data.map((point, index) => {
+    const value =
+      typeof point === 'number'
+        ? point
+        : typeof point.value === 'number'
+          ? point.value
+          : typeof point.price === 'number'
+            ? point.price
+            : 0;
     const x = (index / Math.max(data.length - 1, 1)) * width;
-    const y = height - ((point.value - min) / range) * height;
+    const y = height - ((value - min) / range) * height;
     return { x, y };
   });
   const pathD = points
@@ -33,7 +46,7 @@ function SparkLine({ data = [], colorStart = '#9c6bff', colorStop = '#68e1fd' })
         d={pathD}
         fill="none"
         stroke="url(#sparkGradient)"
-        strokeWidth="6"
+        strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

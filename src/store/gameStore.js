@@ -84,66 +84,109 @@ const HOME_ACTIONS = [
     effect: 'protection',
     protectionKey: 'techShield',
   },
+  {
+    id: 'credit_draw',
+    title: 'Забрать кредит',
+    description: 'Используешь часть лимита и пополняешь кэш.',
+    effect: 'take_credit',
+    value: 1500,
+    buttonText: 'Получить $1500',
+  },
 ];
 
-const OPPORTUNITY_LIBRARY = [
+const RANDOM_EVENTS = [
   {
-    id: 'angel_round',
-    mode: 'gain',
-    title: 'Ангельский сигнал',
-    description: 'Фонд хочет соинвестировать. Вложи $700 — получишь долю и премию.',
-    cost: 700,
-    reward: { cashDelta: 1500, salaryBonusDelta: 180 },
-    minCash: 700,
+    id: 'dividend_boost',
+    title: 'Крипто-вознаграждение',
+    description: 'Платформа начислила стейкинг-бонус.',
+    effect: { cashDelta: 320 },
+    type: 'positive',
+    chance: 0.35,
   },
   {
-    id: 'medical_bill',
-    mode: 'risk',
-    title: 'Счёт из клиники',
-    description: 'Без страховки платёж $950. Можно оплатить $350 сейчас и закрыть вопрос.',
-    cost: 350,
-    penaltyOnDecline: { cashDelta: -950 },
-    protectionKey: 'healthPlan',
-  },
-  {
-    id: 'tax_audit',
-    mode: 'risk',
+    id: 'tax_review',
     title: 'Налоговая проверка',
-    description: 'Юрист отобьёт штраф за $320. Иначе потеряешь $1100.',
-    cost: 320,
-    penaltyOnDecline: { cashDelta: -1100 },
+    description: 'Нужно срочно оплатить консультацию.',
+    effect: { cashDelta: -480 },
+    type: 'negative',
+    chance: 0.25,
     protectionKey: 'legalShield',
   },
   {
-    id: 'green_energy',
-    mode: 'gain',
-    title: 'Зелёная энергия',
-    description: 'Ставишь панели за $500 — коммуналка падает на $90/мес.',
-    cost: 500,
-    reward: { recurringDelta: -90 },
-    minCash: 500,
+    id: 'portfolio_award',
+    title: 'Премия за лид-магнит',
+    description: 'Выплата за лучшее решение месяца.',
+    effect: { cashDelta: 650, salaryBonusDelta: 120 },
+    type: 'positive',
+    chance: 0.2,
   },
   {
-    id: 'device_break',
-    mode: 'risk',
-    title: 'Поломка техники',
-    description: 'Сервисный контракт $240 или ремонт на $800.',
-    cost: 240,
-    penaltyOnDecline: { cashDelta: -800 },
+    id: 'hardware_failure',
+    title: 'Поломка оборудования',
+    description: 'Ремонт за твой счёт.',
+    effect: { cashDelta: -550 },
+    type: 'negative',
+    chance: 0.3,
     protectionKey: 'techShield',
   },
   {
-    id: 'mentor_slot',
-    mode: 'gain',
-    title: 'Менторский слот',
-    description: 'Час с топ-ментором за $450 даёт постоянный буст дохода.',
-    cost: 450,
-    reward: { salaryBonusDelta: 260 },
-    minCash: 450,
+    id: 'clinic_invoice',
+    title: 'Счёт из клиники',
+    description: 'Без страховки дорого лечиться.',
+    effect: { cashDelta: -620 },
+    type: 'negative',
+    chance: 0.3,
+    protectionKey: 'healthPlan',
+  },
+  {
+    id: 'mentor_call',
+    title: 'Совет ментора',
+    description: 'Знания повышают доход.',
+    effect: { salaryBonusDelta: 180 },
+    type: 'positive',
+    chance: 0.25,
+  },
+  {
+    id: 'utility_spike',
+    title: 'Коммунальный скачок',
+    description: 'Расходы выросли на месяц.',
+    effect: { cashDelta: -300 },
+    type: 'negative',
+    chance: 0.2,
+  },
+  {
+    id: 'low_utilities',
+    title: 'Скидки на энергорынке',
+    description: 'Постоянно снижаешь фиксированные расходы.',
+    effect: { recurringDelta: -60 },
+    type: 'positive',
+    chance: 0.15,
   },
 ];
 
 const roundMoney = (value) => Math.round(value ?? 0);
+
+function describeEffect(effect = {}) {
+  const parts = [];
+  if (typeof effect.cashDelta === 'number' && effect.cashDelta !== 0) {
+    parts.push(`${effect.cashDelta > 0 ? '+' : '-'}$${Math.abs(Math.round(effect.cashDelta))}`);
+  }
+  if (typeof effect.salaryBonusDelta === 'number' && effect.salaryBonusDelta !== 0) {
+    parts.push(
+      `зарплата ${effect.salaryBonusDelta > 0 ? '+' : '-'}$${Math.abs(
+        Math.round(effect.salaryBonusDelta),
+      )}`,
+    );
+  }
+  if (typeof effect.recurringDelta === 'number' && effect.recurringDelta !== 0) {
+    parts.push(
+      `фикс.расходы ${effect.recurringDelta > 0 ? '+' : '-'}$${Math.abs(
+        Math.round(effect.recurringDelta),
+      )}`,
+    );
+  }
+  return parts.length ? parts.join(', ') : null;
+}
 
 function rollMonthlyActions(seed, count = 4) {
   const pool = HOME_ACTIONS.map((item) => item.id);
@@ -171,30 +214,61 @@ function applyOutcomeToState(state, outcome = {}) {
     const next = Math.max(0, roundMoney((state.recurringExpenses || 0) + outcome.recurringDelta));
     patch.recurringExpenses = next;
   }
+  if (typeof outcome.debtDelta === 'number') {
+    const nextDebt = Math.max(0, roundMoney(state.debt + outcome.debtDelta));
+    patch.debt = nextDebt;
+  }
   return patch;
 }
 
-function rollOpportunity(state, seed) {
-  if (!OPPORTUNITY_LIBRARY.length) {
-    return { opportunity: null, seed };
+function rollRandomEvent(state, seed) {
+  if (!RANDOM_EVENTS.length) {
+    return { event: null, seed, patch: {}, message: null };
   }
   let cursorSeed = seed;
+  const rollChance = uniformFromSeed(cursorSeed);
+  cursorSeed = rollChance.seed;
+  if (rollChance.value > 0.55) {
+    return { event: null, seed: cursorSeed, patch: {}, message: null };
+  }
   const pickRoll = uniformFromSeed(cursorSeed);
   cursorSeed = pickRoll.seed;
   const index = Math.min(
-    OPPORTUNITY_LIBRARY.length - 1,
-    Math.floor(pickRoll.value * OPPORTUNITY_LIBRARY.length),
+    RANDOM_EVENTS.length - 1,
+    Math.floor(pickRoll.value * RANDOM_EVENTS.length),
   );
-  const template = OPPORTUNITY_LIBRARY[index];
-  const protectedBy =
-    template.protectionKey && state.protections?.[template.protectionKey] ? template.protectionKey : null;
+  const event = RANDOM_EVENTS[index];
+  const confirm = uniformFromSeed(cursorSeed);
+  cursorSeed = confirm.seed;
+  if (confirm.value > (event.chance ?? 0.5)) {
+    return { event: null, seed: cursorSeed, patch: {}, message: null };
+  }
+  if (event.protectionKey && state.protections?.[event.protectionKey]) {
+    const protections = {
+      ...state.protections,
+      [event.protectionKey]: false,
+    };
+    return {
+      event: { ...event, prevented: true },
+      seed: cursorSeed,
+      patch: {},
+      message: `${event.title}: защита сработала`,
+      protections,
+    };
+  }
+  const patch = applyOutcomeToState(state, event.effect);
+  const effectText = describeEffect(event.effect);
+  const base =
+    event.type === 'positive'
+      ? `${event.title}: ${event.description}`
+      : `⚠ ${event.title}: ${event.description}`;
+  const message = effectText ? `${base} (${effectText})` : base;
   return {
-    opportunity: {
-      ...template,
-      protectedBy,
-      createdAt: state.month + 1,
-    },
+    event,
     seed: cursorSeed,
+    patch,
+    message,
+    protections: null,
   };
 }
 
@@ -222,7 +296,10 @@ function ensureStoredSeed() {
 function buildProfessionState(baseState, profession) {
   if (!profession) return {};
   const instrumentList = baseState.configs?.instruments?.instruments || [];
-  const seededPrices = seedPriceState(instrumentList);
+  const seededPrices = seedPriceState(
+    instrumentList,
+    baseState.rngSeed ?? ensureStoredSeed(),
+  );
   const holdings = {};
   Object.entries(profession.startingPortfolio || {}).forEach(([instrumentId, units]) => {
     holdings[instrumentId] = {
@@ -274,7 +351,7 @@ function buildProfessionState(baseState, profession) {
     availableCredit: creditLimit - debt,
     lastTurn: null,
     recentLog: [],
-    opportunity: null,
+    currentEvent: null,
     availableActions: HOME_ACTIONS.slice(0, 4),
   };
 }
@@ -341,6 +418,17 @@ function handleHomeAction(actionId, state) {
       message = 'Защита активирована.';
       break;
     }
+    case 'take_credit': {
+      const available = Math.max(0, state.creditLimit - state.debt);
+      const draw = Math.min(action.value || 1000, available);
+      if (draw <= 0) {
+        return { patch: {}, message: 'Нет доступного лимита.' };
+      }
+      patch.cash = roundMoney(state.cash + draw);
+      patch.debt = roundMoney(state.debt + draw);
+      message = `Получено $${draw} кредита`;
+      break;
+    }
     default:
       break;
   }
@@ -378,7 +466,7 @@ const useGameStore = create(
       availableCredit: 0,
       lastTurn: null,
       recentLog: [],
-      opportunity: null,
+      currentEvent: null,
       availableActions: HOME_ACTIONS.slice(0, 4),
       bootstrapFromConfigs: (bundle) =>
         set((state) => {
@@ -386,7 +474,7 @@ const useGameStore = create(
           const priceState =
             Object.keys(state.priceState || {}).length > 0
               ? state.priceState
-              : seedPriceState(bundle?.instruments?.instruments);
+              : seedPriceState(bundle?.instruments?.instruments, rngSeed);
           return {
             configs: bundle,
             configsReady: true,
@@ -471,57 +559,81 @@ const useGameStore = create(
           const cash = roundMoney(
             state.cash + salary + passiveIncome - livingCost - recurringExpenses,
           );
-          const netWorth = cash + holdingsValue - debt;
-          const creditLimit = computeCreditLimit({
-            profession: state.profession,
-            netWorth,
-            salary,
-            rules: state.configs.rules,
-          });
-          const availableCredit = creditLimit - debt;
-          const metrics = {
-            passiveIncome,
-            livingCost,
-            recurringExpenses,
-            netWorth,
-            cash,
-            availableCredit,
-            monthlyCashFlow: salary + passiveIncome - livingCost - recurringExpenses,
-            debtDelta: debtInterest,
-            debt,
-          };
-          const goalState = evaluateGoals(
-            { rules: state.configs.rules, trackers: state.trackers },
-            metrics,
-          );
-          const netHistory = clampHistory([
+          const netHistoryBase = clampHistory([
             ...(state.history.netWorth || []),
-            { month: state.month + 1, value: netWorth },
-          ]);
-          const cashFlowHistory = clampHistory([
-            ...(state.history.cashFlow || []),
-            { month: state.month + 1, value: metrics.monthlyCashFlow },
+            { month: state.month + 1, value: cash + holdingsValue - debt },
           ]);
           const passiveHistory = clampHistory([
             ...(state.history.passiveIncome || []),
             { month: state.month + 1, value: passiveIncome },
           ]);
-          const opportunityRoll = rollOpportunity(
-            { ...state, month: state.month, protections: state.protections, cash },
-            rngSeed,
+          const eventRoll = rollRandomEvent({ ...state, cash, debt }, rngSeed);
+          const actionsRoll = rollMonthlyActions(eventRoll.seed);
+          const patchedCash = eventRoll.patch.cash ?? cash;
+          const patchedDebt = eventRoll.patch.debt ?? debt;
+          const patchedSalaryBonus = eventRoll.patch.salaryBonus ?? state.salaryBonus;
+          const patchedRecurring = eventRoll.patch.recurringExpenses ?? state.recurringExpenses;
+          const patchedProtections = eventRoll.protections || state.protections;
+          const netWorth = patchedCash + holdingsValue - patchedDebt;
+          const creditLimit = computeCreditLimit({
+            profession: state.profession,
+            netWorth,
+            salary: (state.profession.salaryMonthly || 0) + patchedSalaryBonus,
+            rules: state.configs.rules,
+          });
+          const cashFlowHistory = clampHistory([
+            ...(state.history.cashFlow || []),
+            {
+              month: state.month + 1,
+              value: salary + passiveIncome - livingCost - patchedRecurring,
+            },
+          ]);
+          const availableCredit = creditLimit - patchedDebt;
+          const metrics = {
+            passiveIncome,
+            livingCost,
+            recurringExpenses: patchedRecurring,
+            netWorth,
+            cash: patchedCash,
+            availableCredit,
+            monthlyCashFlow: salary + passiveIncome - livingCost - patchedRecurring,
+            debtDelta: debtInterest,
+            debt: patchedDebt,
+          };
+          const goalState = evaluateGoals(
+            { rules: state.configs.rules, trackers: state.trackers },
+            metrics,
           );
-          const actionsRoll = rollMonthlyActions(opportunityRoll.seed);
-          const nextOpportunity = opportunityRoll.opportunity;
+          const netHistory = netHistoryBase.length
+            ? [
+                ...netHistoryBase.slice(0, netHistoryBase.length - 1),
+                { month: state.month + 1, value: netWorth },
+              ]
+            : [{ month: state.month + 1, value: netWorth }];
+          let recentLog = state.recentLog || [];
+          if (eventRoll.message) {
+            const entry = {
+              id: `event-${Date.now()}`,
+              month: state.month + 1,
+              text: eventRoll.message,
+            };
+            recentLog = [entry, ...recentLog].slice(0, 5);
+          }
           return {
             month: state.month + 1,
-            cash,
-            debt,
+            cash: patchedCash,
+            debt: patchedDebt,
+            salaryBonus: patchedSalaryBonus,
+            recurringExpenses: patchedRecurring,
             priceState,
             rngSeed: actionsRoll.seed,
             shockState,
             livingCost,
-            opportunity: nextOpportunity,
+            currentEvent: eventRoll.event
+              ? { ...eventRoll.event, message: eventRoll.message }
+              : null,
             availableActions: actionsRoll.actions,
+            protections: patchedProtections,
             history: {
               netWorth: netHistory,
               cashFlow: cashFlowHistory,
@@ -540,6 +652,7 @@ const useGameStore = create(
               debtInterest,
               returns: simResult.returns,
             },
+            recentLog,
           };
         }),
       buyInstrument: (instrumentId, desiredAmount) =>
@@ -614,56 +727,24 @@ const useGameStore = create(
             cash: state.cash + netProceeds,
           };
         }),
-      resolveOpportunity: (decision) =>
+      drawCredit: (amount = 1200) =>
         set((state) => {
-          const card = state.opportunity;
-          if (!card) return {};
-          const baseLog = state.recentLog || [];
-          const logEntry = {
-            id: `opp-${card.id}-${Date.now()}`,
-            month: state.month,
-            text: '',
-          };
-          let patch = {};
-          if (card.protectedBy) {
-            const protections = {
-              ...state.protections,
-              [card.protectedBy]: false,
-            };
-            logEntry.text = `${card.title}: защита всё покрыла`;
-            return {
-              opportunity: null,
-              protections,
-              recentLog: [logEntry, ...baseLog].slice(0, 5),
-            };
-          }
-          if (decision === 'accept') {
-            if (card.cost && state.cash < card.cost) {
-              return {};
-            }
-            if (card.cost) {
-              patch.cash = roundMoney(state.cash - card.cost);
-            }
-            patch = {
-              ...patch,
-              ...applyOutcomeToState({ ...state, ...patch }, card.reward),
-            };
-            logEntry.text = `Принято: ${card.title}`;
-          } else {
-            if (card.penaltyOnDecline) {
-              patch = {
-                ...patch,
-                ...applyOutcomeToState(state, card.penaltyOnDecline),
-              };
-              logEntry.text = `Отказ → штраф по "${card.title}"`;
-            } else {
-              logEntry.text = `Пропущено "${card.title}"`;
-            }
-          }
+          const available = Math.max(0, state.creditLimit - state.debt);
+          const draw = Math.min(roundMoney(amount), available);
+          if (draw <= 0) return {};
           return {
-            ...patch,
-            opportunity: null,
-            recentLog: [logEntry, ...baseLog].slice(0, 5),
+            cash: roundMoney(state.cash + draw),
+            debt: roundMoney(state.debt + draw),
+          };
+        }),
+      serviceDebt: (amount = 600) =>
+        set((state) => {
+          if (state.debt <= 0 || state.cash <= 0) return {};
+          const payment = Math.min(roundMoney(amount), state.cash, state.debt);
+          if (payment <= 0) return {};
+          return {
+            cash: roundMoney(state.cash - payment),
+            debt: roundMoney(state.debt - payment),
           };
         }),
       applyHomeAction: (actionId) =>
@@ -681,13 +762,19 @@ const useGameStore = create(
           return { ...patch, recentLog };
         }),
       resetGame: () =>
-        set((state) => ({
-          ...buildProfessionState(state, state.profession),
-          ...(() => {
-            const roll = rollMonthlyActions(state.rngSeed || ensureStoredSeed());
-            return { availableActions: roll.actions, rngSeed: roll.seed };
-          })(),
-        })),
+        set((state) => {
+          if (!state.profession) return {};
+          const base = buildProfessionState(state, state.profession);
+          const roll = rollMonthlyActions(state.rngSeed || ensureStoredSeed());
+          return {
+            ...state,
+            ...base,
+            availableActions: roll.actions,
+            rngSeed: roll.seed,
+            configs: state.configs,
+            configsReady: state.configsReady,
+          };
+        }),
     }),
     {
       name: 'finstrategy-store',
@@ -718,7 +805,7 @@ const useGameStore = create(
         availableCredit: state.availableCredit,
         lastTurn: state.lastTurn,
         recentLog: state.recentLog,
-        opportunity: state.opportunity,
+        currentEvent: state.currentEvent,
         availableActions: state.availableActions,
       }),
     },

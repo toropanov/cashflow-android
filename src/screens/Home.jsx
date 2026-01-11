@@ -1,12 +1,19 @@
+import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useGameStore, { homeActions } from '../store/gameStore';
 import Card from '../components/Card';
 import GradientButton from '../components/GradientButton';
 import Button from '../components/Button';
+import Slider from '../components/Slider';
 import styles from './Home.module.css';
 
 function ActionCard({ action, onSelect, cash }) {
   const disabled = action.cost ? cash < action.cost : false;
-  const buttonLabel = action.cost ? `Оплатить $${action.cost}` : 'Активировать';
+  const buttonLabel = action.buttonText
+    ? action.buttonText
+    : action.cost
+      ? `Оплатить $${action.cost}`
+      : 'Активировать';
   return (
     <Card className={styles.actionCard}>
       <div className={styles.actionIcon}>
@@ -68,12 +75,71 @@ function Home() {
   const applyHomeAction = useGameStore((state) => state.applyHomeAction);
   const advanceMonth = useGameStore((state) => state.advanceMonth);
   const lastTurn = useGameStore((state) => state.lastTurn);
-  const recentLog = useGameStore((state) => state.recentLog);
   const cash = useGameStore((state) => state.cash);
+  const currentEvent = useGameStore((state) => state.currentEvent);
   const availableActions = useGameStore((state) => state.availableActions || homeActions);
+  const drawCredit = useGameStore((state) => state.drawCredit);
+  const serviceDebt = useGameStore((state) => state.serviceDebt);
+  const debt = useGameStore((state) => state.debt);
+  const creditLimit = useGameStore((state) => state.creditLimit);
+  const availableCredit = useGameStore((state) => state.availableCredit);
+  const resetGame = useGameStore((state) => state.resetGame);
+  const [leverage, setLeverage] = useState(1.5);
+  const baseDraw = 600;
+  const creditAmount = useMemo(() => Math.round(baseDraw * leverage), [leverage]);
 
   return (
     <div className={styles.screen}>
+      <Card className={styles.card}>
+        <header>
+          <h3>Результат последнего месяца</h3>
+        </header>
+        <LastTurn data={lastTurn} />
+      </Card>
+      {currentEvent && (
+        <Card className={styles.eventCard}>
+          <div>
+            <p className={styles.eventTitle}>{currentEvent.title}</p>
+            <span>{currentEvent.message || currentEvent.description}</span>
+          </div>
+        </Card>
+      )}
+      <Card className={styles.creditCard}>
+        <div className={styles.creditHeader}>
+          <div>
+            <span>Долг</span>
+            <strong>${Math.round(debt).toLocaleString('en-US')}</strong>
+          </div>
+          <div>
+            <span>Доступно</span>
+            <strong>${Math.round(Math.max(availableCredit, 0)).toLocaleString('en-US')}</strong>
+          </div>
+        </div>
+        <Slider
+          min={1}
+          max={4}
+          step={0.5}
+          value={leverage}
+          onChange={setLeverage}
+          label={`Плечо ×${leverage.toFixed(1)}`}
+        />
+        <div className={styles.creditActions}>
+          <Button
+            variant="primary"
+            onClick={() => drawCredit(creditAmount)}
+            disabled={availableCredit <= 0}
+          >
+            Взять ${creditAmount}
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => serviceDebt(creditAmount)}
+            disabled={debt <= 0 || cash <= 0}
+          >
+            Погасить ${creditAmount}
+          </Button>
+        </div>
+      </Card>
       <section>
         <h2>Ходы месяца</h2>
         <div className={styles.grid}>
@@ -82,31 +148,10 @@ function Home() {
           ))}
         </div>
       </section>
-      <Card className={styles.card}>
-        <header>
-          <h3>Результат последнего месяца</h3>
-        </header>
-        <LastTurn data={lastTurn} />
-      </Card>
-      <Card className={styles.card}>
-        <header>
-          <h3>Журнал решений</h3>
-          <span>Автосейв после каждого действия</span>
-        </header>
-        <div className={styles.logList}>
-          {recentLog?.length ? (
-            recentLog.map((entry) => (
-              <div key={entry.id} className={styles.logItem}>
-                <span>Месяц {entry.month}</span>
-                <p>{entry.text}</p>
-              </div>
-            ))
-          ) : (
-            <p className={styles.placeholder}>Пока пусто — выбери действие.</p>
-          )}
-        </div>
-      </Card>
       <GradientButton onClick={advanceMonth}>Следующий месяц</GradientButton>
+      <Button variant="ghost" onClick={resetGame}>
+        Начать заново
+      </Button>
     </div>
   );
 }

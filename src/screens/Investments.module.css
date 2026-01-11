@@ -9,24 +9,6 @@
   margin-bottom: 0.4rem;
 }
 
-.charts {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.chartCard {
-  background: rgba(255, 255, 255, 0.85);
-}
-
-.chartHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.8rem;
-  color: rgba(9, 12, 32, 0.7);
-}
-
 .list {
   display: flex;
   flex-direction: column;
