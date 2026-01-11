@@ -139,9 +139,6 @@ function Home() {
   return (
     <div className={styles.screen}>
       <Card className={styles.card}>
-        <header>
-          <h3>Последний ход</h3>
-        </header>
         <LastTurn data={lastTurn} showReturns={hasInvestments} summary={summary} />
       </Card>
       {currentEvent && (

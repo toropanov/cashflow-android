@@ -87,6 +87,13 @@
   margin-bottom: 1rem;
 }
 
+.resultsLabel {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
 .lastTurn {
   display: flex;
   flex-direction: column;
