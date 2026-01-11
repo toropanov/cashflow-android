@@ -49,7 +49,6 @@ const formatMoney = (value) => {
 };
 
 function TopStats({ month, netWorth, cash, passiveIncome, debt, availableCredit, recurringExpenses }) {
-  const monthLabel = `Месяц ${month}`;
   const formatMonthly = (value) => `${formatMoney(value)}/мес`;
   const netPrev = useRef(netWorth);
   const [netDelta, setNetDelta] = useState(null);
@@ -64,10 +63,6 @@ function TopStats({ month, netWorth, cash, passiveIncome, debt, availableCredit,
   }, [netWorth]);
   return (
     <section className={styles.wrapper}>
-      <div className={styles.heading}>
-        <p>{monthLabel}</p>
-        <span>Баланс</span>
-      </div>
       <Card className={styles.primaryCard}>
         <div className={styles.netWorthLabel}>Чистая стоимость</div>
         <div className={styles.netWorthValueRow}>

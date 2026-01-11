@@ -46,7 +46,7 @@ function SparkLine({ data = [], colorStart = '#9c6bff', colorStop = '#68e1fd' })
         d={pathD}
         fill="none"
         stroke="url(#sparkGradient)"
-        strokeWidth="3"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

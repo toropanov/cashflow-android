@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import useGameStore from '../store/gameStore';
-import TopStats from '../components/TopStats';
 import BottomNav from '../components/BottomNav';
 import { calculateHoldingsValue, calculatePassiveIncome } from '../domain/finance';
 import styles from './MainLayout.module.css';
+import { spriteStyle, getProfessionIcon } from '../utils/iconSprite';
 
 function StatusRibbon({ win, lose }) {
   if (!win && !lose) return null;
@@ -23,6 +23,7 @@ function MainLayout() {
   const navigate = useNavigate();
   const storeData = useGameStore(
     useShallow((state) => ({
+      profession: state.profession,
       month: state.month,
       cash: state.cash,
       debt: state.debt,
@@ -56,18 +57,37 @@ function MainLayout() {
 
   const netWorth = storeData.cash + holdingsValue - storeData.debt;
 
+  const formatMoney = (value) => {
+    const rounded = Math.round(value);
+    return `${rounded < 0 ? '-$' : '$'}${Math.abs(rounded).toLocaleString('en-US')}`;
+  };
   return (
     <div className={styles.layout}>
       <div className={styles.backdrop} />
-      <TopStats
-        month={storeData.month}
-        netWorth={Math.max(netWorth, 0)}
-        cash={Math.max(storeData.cash, 0)}
-        passiveIncome={Math.max(passiveIncome, 0)}
-        debt={Math.max(storeData.debt, 0)}
-        availableCredit={Math.max(storeData.availableCredit || 0, 0)}
-        recurringExpenses={Math.max(storeData.recurringExpenses || 0, 0)}
-      />
+      <header className={styles.headerBar}>
+        <div className={styles.headerLeft}>
+          <div
+            className={styles.avatar}
+            style={spriteStyle(getProfessionIcon(storeData.profession))}
+          />
+          <div>
+            <span>{storeData.profession?.title || 'Профиль'}</span>
+            <strong>Месяц {storeData.month}</strong>
+          </div>
+        </div>
+        <div className={styles.headerRight}>
+          <span>Net worth</span>
+          <strong>{formatMoney(netWorth)}</strong>
+          <button
+            type="button"
+            className={styles.exitButton}
+            onClick={() => navigate('/choose')}
+            title="Сменить роль"
+          >
+            ↺
+          </button>
+        </div>
+      </header>
       <StatusRibbon win={storeData.winCondition} lose={storeData.loseCondition} />
       <main className={styles.content}>
         <Outlet />

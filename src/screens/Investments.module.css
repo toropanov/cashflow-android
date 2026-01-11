@@ -9,6 +9,14 @@
   margin-bottom: 0.4rem;
 }
 
+.feedback {
+  padding: 0.8rem 1rem;
+  border-radius: 16px;
+  background: rgba(47, 211, 160, 0.2);
+  color: #0b1128;
+  font-weight: 600;
+}
+
 .list {
   display: flex;
   flex-direction: column;
@@ -35,13 +43,8 @@
 .instrumentIcon {
   width: 62px;
   height: 62px;
-  border-radius: 24px;
-  background: linear-gradient(120deg, rgba(172, 113, 255, 0.9), rgba(101, 216, 255, 0.9));
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
+  border-radius: 22px;
+  box-shadow: 0 10px 25px rgba(8, 12, 32, 0.25);
 }
 
 .priceBlock {

@@ -3,11 +3,22 @@
   flex-direction: column;
   gap: 1.5rem;
   padding-bottom: 6rem;
+  margin-top: 1rem;
 }
 
 .eventCard {
   background: rgba(255, 255, 255, 0.2);
   color: #fefefe;
+}
+
+.eventHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.eventHeader .iconSprite {
+  margin-bottom: 0;
 }
 
 .eventTitle {
@@ -84,21 +95,15 @@
 .actionIcon {
   width: 52px;
   height: 52px;
-  border-radius: 18px;
-  background: linear-gradient(120deg, rgba(167, 107, 255, 0.8), rgba(101, 216, 255, 0.85));
   margin-bottom: 0.8rem;
-  position: relative;
 }
 
-.actionIcon span {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.75);
-  top: 12px;
-  left: 18px;
-  filter: blur(1px);
+.iconSprite {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  margin-bottom: 0.8rem;
+  box-shadow: 0 8px 20px rgba(8, 12, 32, 0.3);
 }
 
 .card header {

@@ -4,7 +4,10 @@ import Card from '../components/Card';
 import GradientButton from '../components/GradientButton';
 import Button from '../components/Button';
 import Slider from '../components/Slider';
+import TopStats from '../components/TopStats';
+import { calculateHoldingsValue, calculatePassiveIncome } from '../domain/finance';
 import styles from './Home.module.css';
+import { spriteStyle } from '../utils/iconSprite';
 
 function ActionCard({ action, onSelect, cash }) {
   const disabled = action.cost ? cash < action.cost : false;
@@ -15,9 +18,7 @@ function ActionCard({ action, onSelect, cash }) {
       : 'Активировать';
   return (
     <Card className={styles.actionCard}>
-      <div className={styles.actionIcon}>
-        <span />
-      </div>
+      <div className={styles.iconSprite} style={spriteStyle(action.icon)} />
       <h3>{action.title}</h3>
       <p>{action.description}</p>
       <Button variant="primary" onClick={() => onSelect(action.id)} disabled={disabled}>
@@ -93,12 +94,44 @@ function Home() {
   const debt = useGameStore((state) => state.debt);
   const creditLimit = useGameStore((state) => state.creditLimit);
   const availableCredit = useGameStore((state) => state.availableCredit);
+  const recurringExpenses = useGameStore((state) => state.recurringExpenses || 0);
+  const month = useGameStore((state) => state.month);
+  const priceState = useGameStore((state) => state.priceState);
+  const investments = useGameStore((state) => state.investments);
+  const configs = useGameStore((state) => state.configs);
   const [leverage, setLeverage] = useState(1.5);
   const baseDraw = 600;
   const creditAmount = useMemo(() => Math.round(baseDraw * leverage), [leverage]);
+  const instrumentMap = useMemo(() => {
+    const list = configs?.instruments?.instruments || [];
+    return list.reduce((acc, instrument) => {
+      acc[instrument.id] = instrument;
+      return acc;
+    }, {});
+  }, [configs]);
+  const holdingsValue = useMemo(
+    () => calculateHoldingsValue(investments, priceState),
+    [investments, priceState],
+  );
+  const passiveIncomeVal = useMemo(
+    () => calculatePassiveIncome(investments, priceState, instrumentMap),
+    [investments, priceState, instrumentMap],
+  );
+  const netWorth = useMemo(() => cash + holdingsValue - debt, [cash, holdingsValue, debt]);
 
   return (
     <div className={styles.screen}>
+      <div className={styles.statsCard}>
+        <TopStats
+          month={month}
+          netWorth={netWorth}
+          cash={cash}
+          passiveIncome={passiveIncomeVal}
+          debt={debt}
+          availableCredit={availableCredit}
+          recurringExpenses={recurringExpenses}
+        />
+      </div>
       <Card className={styles.card}>
         <header>
           <h3>Результат последнего месяца</h3>
@@ -107,9 +140,12 @@ function Home() {
       </Card>
       {currentEvent && (
         <Card className={styles.eventCard}>
-          <div>
-            <p className={styles.eventTitle}>{currentEvent.title}</p>
-            <span>{currentEvent.message || currentEvent.description}</span>
+          <div className={styles.eventHeader}>
+            <div className={styles.iconSprite} style={spriteStyle(currentEvent.icon || 'iconCoins')} />
+            <div>
+              <p className={styles.eventTitle}>{currentEvent.title}</p>
+              <span>{currentEvent.message || currentEvent.description}</span>
+            </div>
           </div>
         </Card>
       )}

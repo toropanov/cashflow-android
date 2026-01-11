@@ -7,17 +7,17 @@ import Modal from '../components/Modal';
 import Slider from '../components/Slider';
 import SparkLine from '../components/SparkLine';
 import styles from './Investments.module.css';
+import { spriteStyle, getTypeIcon } from '../utils/iconSprite';
 
 function InstrumentCard({ instrument, priceInfo, holding, onTrade }) {
   const changePct = Math.round((priceInfo?.lastReturn || 0) * 100);
   const price = Math.round(priceInfo?.price || instrument.initialPrice);
   const value = Math.round((holding?.units || 0) * (priceInfo?.price || instrument.initialPrice));
+  const iconKey = getTypeIcon(instrument.type);
   return (
     <Card className={styles.instrumentCard}>
       <div className={styles.instrumentHeader}>
-        <div className={styles.instrumentIcon}>
-          <span>{instrument.title.slice(0, 1)}</span>
-        </div>
+        <div className={styles.instrumentIcon} style={spriteStyle(iconKey)} />
         <div>
           <h3>{instrument.title}</h3>
         </div>
@@ -128,6 +128,7 @@ function Investments() {
   const buyInstrument = useGameStore((state) => state.buyInstrument);
   const sellInstrument = useGameStore((state) => state.sellInstrument);
   const [trade, setTrade] = useState(null);
+  const [feedback, setFeedback] = useState(null);
 
   const handleTrade = (instrument, mode) => {
     const priceInfo = priceState[instrument.id];
@@ -142,10 +143,13 @@ function Investments() {
     if (!trade) return;
     if (trade.mode === 'buy') {
       buyInstrument(trade.instrument.id, amount);
+      setFeedback(`Куплено ${trade.instrument.title} на $${Math.round(amount).toLocaleString('en-US')}`);
     } else {
       sellInstrument(trade.instrument.id, amount);
+      setFeedback(`Продано ${trade.instrument.title} на $${Math.round(amount).toLocaleString('en-US')}`);
     }
     setTrade(null);
+    setTimeout(() => setFeedback(null), 2000);
   };
 
   const cards = useMemo(
@@ -163,6 +167,7 @@ function Investments() {
       <header>
         <h2>Инвестиционный холдинг</h2>
       </header>
+      {feedback && <div className={styles.feedback}>{feedback}</div>}
       <div className={styles.list}>
         {cards.map((card) => (
           <InstrumentCard

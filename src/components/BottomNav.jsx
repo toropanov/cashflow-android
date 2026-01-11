@@ -37,27 +37,27 @@ function Icon({ id, active }) {
       return (
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
           <path
-            d="M5 4V10H11"
+            d="M6 5V11H12"
             stroke={stroke}
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
           <path
-            d="M19 20V14H13"
+            d="M18 19V13H12"
             stroke={stroke}
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
           <path
-            d="M19 14C18 10 15 6 11 6C8 6 6 8 5 10"
+            d="M18 13C17 9 14 6 11 6C8.5 6 7 8 6 10"
             stroke={stroke}
             strokeWidth="2"
             strokeLinecap="round"
           />
           <path
-            d="M5 20C6 22 8.5 24 13 24C16 24 18 22 19 20"
+            d="M6 19C7 21 9 23 13 23C15.5 23 17 21 18 19"
             stroke={stroke}
             strokeWidth="2"
             strokeLinecap="round"

@@ -7,6 +7,7 @@
   position: relative;
   color: #0c1024;
   overflow: hidden;
+  padding-top: 5rem;
 }
 
 .backdrop {
@@ -20,9 +21,75 @@
   z-index: -1;
 }
 
+.headerBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  position: fixed;
+  top: 0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(480px, 100%);
+  z-index: 9;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(30px);
+  border-radius: 20px;
+  box-shadow:
+    0 20px 45px rgba(5, 8, 20, 0.35),
+    inset 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(8, 12, 32, 0.35);
+}
+
+.headerLeft span {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.headerLeft strong {
+  font-size: 0.95rem;
+  color: #fefefe;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.headerRight strong {
+  font-size: 1.1rem;
+  color: #fefefe;
+}
+
+.exitButton {
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
 .content {
   flex: 1;
-  padding: 8rem 1.2rem 6rem;
+  padding: 0 1.2rem 4rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;

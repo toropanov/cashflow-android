@@ -29,12 +29,14 @@ const HOME_ACTIONS = [
     cost: 250,
     effect: 'salary_up',
     value: 250,
+    icon: 'iconWallet',
   },
   {
     id: 'debt_payment',
     title: 'Погашение долга',
     description: 'Закрыть до 30% долга — облегчает будущие проценты.',
     effect: 'debt_down',
+    icon: 'iconCard',
   },
   {
     id: 'skill_invest',
@@ -43,6 +45,7 @@ const HOME_ACTIONS = [
     cost: 600,
     effect: 'salary_up',
     value: 400,
+    icon: 'iconOwl',
   },
   {
     id: 'optimize_expenses',
@@ -51,6 +54,7 @@ const HOME_ACTIONS = [
     cost: 320,
     effect: 'expense_down',
     value: 120,
+    icon: 'iconCalculator',
   },
   {
     id: 'health_plan',
@@ -59,6 +63,7 @@ const HOME_ACTIONS = [
     cost: 350,
     effect: 'protection',
     protectionKey: 'healthPlan',
+    icon: 'iconStethoscope',
   },
   {
     id: 'wellness',
@@ -67,6 +72,7 @@ const HOME_ACTIONS = [
     cost: 180,
     effect: 'cost_down',
     value: 80,
+    icon: 'iconSmile',
   },
   {
     id: 'legal_consult',
@@ -75,6 +81,7 @@ const HOME_ACTIONS = [
     cost: 280,
     effect: 'protection',
     protectionKey: 'legalShield',
+    icon: 'iconGrowth',
   },
   {
     id: 'equipment_plan',
@@ -83,6 +90,7 @@ const HOME_ACTIONS = [
     cost: 220,
     effect: 'protection',
     protectionKey: 'techShield',
+    icon: 'iconHardhat',
   },
   {
     id: 'credit_draw',
@@ -91,6 +99,7 @@ const HOME_ACTIONS = [
     effect: 'take_credit',
     value: 1500,
     buttonText: 'Получить $1500',
+    icon: 'iconPiggy',
   },
   {
     id: 'event_pitch',
@@ -101,6 +110,7 @@ const HOME_ACTIONS = [
     chanceSuccess: 0.4,
     success: { cashDelta: 2200 },
     fail: { cashDelta: -600 },
+    icon: 'iconGift',
   },
 ];
 
@@ -112,6 +122,7 @@ const RANDOM_EVENTS = [
     effect: { cashDelta: 320 },
     type: 'positive',
     chance: 0.35,
+    icon: 'iconCoins',
   },
   {
     id: 'tax_review',
@@ -121,6 +132,7 @@ const RANDOM_EVENTS = [
     type: 'negative',
     chance: 0.25,
     protectionKey: 'legalShield',
+    icon: 'iconCard',
   },
   {
     id: 'portfolio_award',
@@ -129,6 +141,7 @@ const RANDOM_EVENTS = [
     effect: { cashDelta: 650, salaryBonusDelta: 120 },
     type: 'positive',
     chance: 0.2,
+    icon: 'iconGift',
   },
   {
     id: 'hardware_failure',
@@ -138,6 +151,7 @@ const RANDOM_EVENTS = [
     type: 'negative',
     chance: 0.3,
     protectionKey: 'techShield',
+    icon: 'iconHardhat',
   },
   {
     id: 'clinic_invoice',
@@ -147,6 +161,7 @@ const RANDOM_EVENTS = [
     type: 'negative',
     chance: 0.3,
     protectionKey: 'healthPlan',
+    icon: 'iconStethoscope',
   },
   {
     id: 'mentor_call',
@@ -155,6 +170,7 @@ const RANDOM_EVENTS = [
     effect: { salaryBonusDelta: 180 },
     type: 'positive',
     chance: 0.25,
+    icon: 'iconBulb',
   },
   {
     id: 'utility_spike',
@@ -163,6 +179,7 @@ const RANDOM_EVENTS = [
     effect: { cashDelta: -300 },
     type: 'negative',
     chance: 0.2,
+    icon: 'iconCart',
   },
   {
     id: 'low_utilities',
@@ -171,6 +188,7 @@ const RANDOM_EVENTS = [
     effect: { recurringDelta: -60 },
     type: 'positive',
     chance: 0.15,
+    icon: 'iconPlant',
   },
 ];
 
@@ -722,9 +740,16 @@ const useGameStore = create(
             units: newUnits,
             costBasis: totalCost / newUnits,
           };
+          const logEntry = {
+            id: `buy-${instrumentId}-${Date.now()}`,
+            month: state.month,
+            text: `Куплено ${instrument.title} на $${Math.round(spend).toLocaleString('en-US')}`,
+          };
+          const recentLog = [logEntry, ...(state.recentLog || [])].slice(0, 5);
           return {
             investments: nextInvestments,
             cash: state.cash - (spend + fee),
+            recentLog,
           };
         }),
       sellInstrument: (instrumentId, desiredAmount) =>
@@ -753,9 +778,16 @@ const useGameStore = create(
               units: remainingUnits,
             };
           }
+          const logEntry = {
+            id: `sell-${instrumentId}-${Date.now()}`,
+            month: state.month,
+            text: `Продано ${instrument.title} на $${Math.round(netProceeds).toLocaleString('en-US')}`,
+          };
+          const recentLog = [logEntry, ...(state.recentLog || [])].slice(0, 5);
           return {
             investments: nextInvestments,
             cash: state.cash + netProceeds,
+            recentLog,
           };
         }),
       drawCredit: (amount = 1200) =>
