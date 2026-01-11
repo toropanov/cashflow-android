@@ -192,11 +192,49 @@
 }
 
 
+.activeOffers {
+  background: rgba(244, 247, 255, 0.95);
+  border: 1px solid rgba(27, 51, 96, 0.1);
+  border-radius: 20px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.activeOffersHeader {
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(28, 46, 80, 0.8);
+}
+
+.activeOfferList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.activeOfferList span {
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgba(21, 40, 72, 0.15);
+  font-size: 0.85rem;
+  color: #1a2f52;
+}
+
+.activeOfferList small {
+  margin-left: 0.4rem;
+  font-size: 0.7rem;
+  color: rgba(28, 46, 80, 0.65);
+}
+
 .sectionHeader {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  margin-bottom: 0.8rem;
+  margin: 1.2rem 0 0.8rem;
   color: rgba(21, 39, 66, 0.95);
 }
 

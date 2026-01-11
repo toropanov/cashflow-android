@@ -520,6 +520,8 @@ const useGameStore = create(
       recentLog: [],
       currentEvent: null,
       availableActions: HOME_ACTIONS.slice(0, 4),
+      activeMonthlyOffers: [],
+      dealParticipations: [],
       bootstrapFromConfigs: (bundle) =>
         set((state) => {
           const rngSeed = state.rngSeed ?? ensureStoredSeed();
@@ -714,6 +716,9 @@ const useGameStore = create(
             trackers: goalState.trackers,
             winCondition: state.winCondition || goalState.win,
             loseCondition: state.loseCondition || goalState.lose,
+            activeMonthlyOffers: (state.activeMonthlyOffers || []).filter(
+              (offer) => offer.expiresMonth > state.month + 1,
+            ),
             dealParticipations: updatedDeals,
             lastTurn: {
               salary,
@@ -870,6 +875,23 @@ const useGameStore = create(
             ...patch,
             rngSeed: nextSeed ?? currentSeed,
           };
+          const success = Object.keys(patch || {}).length > 0;
+          if (success) {
+            const actionMeta =
+              (state.availableActions || []).find((action) => action.id === actionId) ||
+              HOME_ACTIONS.find((action) => action.id === actionId);
+            if (actionMeta) {
+              const remaining = (state.activeMonthlyOffers || []).filter((offer) => offer.id !== actionMeta.id);
+              updates.activeMonthlyOffers = [
+                ...remaining,
+                {
+                  id: actionMeta.id,
+                  title: actionMeta.title,
+                  expiresMonth: state.month + 12,
+                },
+              ];
+            }
+          }
           if (!message) {
             return updates;
           }
@@ -927,6 +949,8 @@ const useGameStore = create(
         recentLog: state.recentLog,
         currentEvent: state.currentEvent,
         availableActions: state.availableActions,
+        activeMonthlyOffers: state.activeMonthlyOffers,
+        dealParticipations: state.dealParticipations,
       }),
     },
   ),

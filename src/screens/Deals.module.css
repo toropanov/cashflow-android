@@ -28,6 +28,12 @@
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  border: 1px solid rgba(27, 51, 96, 0.08);
+}
+
+.dealActive {
+  border-color: rgba(107, 198, 176, 0.6);
+  box-shadow: 0 18px 28px rgba(76, 149, 122, 0.2);
 }
 
 .dealRow {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import useGameStore from '../store/gameStore';
 import Card from '../components/Card';
 import Button from '../components/Button';
@@ -52,9 +52,9 @@ const DEAL_TEMPLATES = [
   },
 ];
 
-function DealCard({ deal, onParticipate, disabled }) {
+function DealCard({ deal, onParticipate, disabled, active }) {
   return (
-    <Card className={styles.dealCard}>
+    <Card className={`${styles.dealCard} ${active ? styles.dealActive : ''}`}>
       <div className={styles.dealRow}>
         <div className={styles.dealIcon} style={spriteStyle(deal.icon)} />
         <div>
@@ -68,8 +68,12 @@ function DealCard({ deal, onParticipate, disabled }) {
           <li key={feature}>{feature}</li>
         ))}
       </ul>
-      <Button variant="primary" onClick={() => onParticipate(deal)} disabled={disabled}>
-        Участвовать за $2 000
+      <Button
+        variant="primary"
+        onClick={() => onParticipate(deal)}
+        disabled={disabled}
+      >
+        {active ? 'Куплено' : 'Участвовать за $2 000'}
       </Button>
     </Card>
   );
@@ -81,6 +85,7 @@ function Deals() {
   const participations = useGameStore((state) => state.dealParticipations || []);
   const participateDeal = useGameStore((state) => state.participateInDeal);
   const [feedback, setFeedback] = useState(null);
+  const cardRefs = useRef({});
 
   const handleParticipate = (deal) => {
     const result = participateDeal({
@@ -95,6 +100,10 @@ function Deals() {
       setFeedback({ text: result.error, positive: false });
     } else {
       setFeedback({ text: `Ты вошёл в «${deal.title}»`, positive: true });
+      const target = cardRefs.current[deal.id];
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
     setTimeout(() => setFeedback(null), 2200);
   };
@@ -111,14 +120,26 @@ function Deals() {
         </div>
       )}
       <div className={styles.list}>
-        {DEAL_TEMPLATES.map((deal) => (
-          <DealCard
-            key={deal.id}
-            deal={deal}
-            onParticipate={handleParticipate}
-            disabled={cash < deal.entryCost}
-          />
-        ))}
+        {DEAL_TEMPLATES.map((deal) => {
+          const active = participations.some(
+            (entry) => !entry.completed && entry.dealId === deal.id,
+          );
+          return (
+            <div
+              key={deal.id}
+              ref={(el) => {
+                cardRefs.current[deal.id] = el;
+              }}
+            >
+              <DealCard
+                deal={deal}
+                onParticipate={handleParticipate}
+                disabled={cash < deal.entryCost || active}
+                active={active}
+              />
+            </div>
+          );
+        })}
       </div>
       {participations.length > 0 && (
         <section className={styles.participations}>

@@ -42,14 +42,15 @@ function LastTurn({ data, showReturns, summary }) {
     const totalIncome = Math.round(data.salary + data.passiveIncome);
     const totalExpenses = Math.round(data.livingCost + recurring + debtInterest);
     const net = Math.round(totalIncome - totalExpenses);
-    const avgReturn =
-      showReturns && Object.keys(data.returns || {}).length
-        ? Math.round(
-            (Object.values(data.returns).reduce((acc, value) => acc + value, 0) /
-              Object.keys(data.returns).length) *
-              100,
-          )
-        : null;
+    const totalHolding = Object.entries(summary.positions || {}).reduce(
+      (sum, [, pos]) => sum + (pos.currentValue || 0),
+      0,
+    );
+    const totalCost = Object.entries(summary.positions || {}).reduce(
+      (sum, [, pos]) => sum + (pos.costBasis || 0),
+      0,
+    );
+    const delta = totalHolding - totalCost;
     return (
       <>
         <div className={styles.resultsLabel}>Результат хода</div>
@@ -63,8 +64,8 @@ function LastTurn({ data, showReturns, summary }) {
         </div>
         <div className={styles.lastRow}>
           <span>Доходность инвестиций</span>
-          <strong className={avgReturn >= 0 ? styles.valuePositive : styles.valueNegative}>
-            {avgReturn !== null ? `${avgReturn}%` : '—'}
+          <strong className={delta >= 0 ? styles.valuePositive : styles.valueNegative}>
+            {totalHolding && totalCost ? (delta >= 0 ? `+$${Math.round(delta).toLocaleString('en-US')}` : `-$${Math.abs(Math.round(delta)).toLocaleString('en-US')}`) : '—'}
           </strong>
         </div>
         <div className={styles.netRow}>
@@ -114,6 +115,8 @@ function Home() {
   const priceState = useGameStore((state) => state.priceState);
   const investments = useGameStore((state) => state.investments);
   const configs = useGameStore((state) => state.configs);
+  const month = useGameStore((state) => state.month);
+  const activeMonthlyOffers = useGameStore((state) => state.activeMonthlyOffers || []);
   const instrumentMap = useMemo(() => {
     const list = configs?.instruments?.instruments || [];
     return list.reduce((acc, instrument) => {
@@ -130,12 +133,34 @@ function Home() {
     [investments, priceState, instrumentMap],
   );
   const netWorth = useMemo(() => cash + holdingsValue - debt, [cash, holdingsValue, debt]);
-  const monthlyOffers = (availableActions || []).slice(0, 2);
+  const activeOfferIds = new Set(
+    (activeMonthlyOffers || [])
+      .filter((offer) => offer.expiresMonth > month)
+      .map((offer) => offer.id),
+  );
+  const monthlyOffers = (availableActions || [])
+    .filter((action) => !activeOfferIds.has(action.id))
+    .slice(0, 2);
+  const visibleActiveOffers = (activeMonthlyOffers || []).filter((offer) => offer.expiresMonth > month);
+  const positions = useMemo(() => {
+    const entries = {};
+    Object.entries(investments || {}).forEach(([instrumentId, holding]) => {
+      const price = priceState[instrumentId]?.price || instrumentMap[instrumentId]?.initialPrice || 0;
+      const units = holding?.units || 0;
+      entries[instrumentId] = {
+        currentValue: units * price,
+        costBasis: (holding?.costBasis || 0) * units,
+      };
+    });
+    return entries;
+  }, [investments, priceState, instrumentMap]);
+
   const summary = {
     netWorth,
     cash,
     passiveIncome: passiveIncomeVal,
     debt,
+    positions,
   };
 
   return (
@@ -171,6 +196,19 @@ function Home() {
           )}
         </div>
       </section>
+      {visibleActiveOffers.length > 0 && (
+        <div className={styles.activeOffers}>
+          <div className={styles.activeOffersHeader}>Активные предложения</div>
+          <div className={styles.activeOfferList}>
+            {visibleActiveOffers.map((offer) => (
+              <span key={offer.id}>
+                {offer.title}
+                <small>ещё {Math.max(0, offer.expiresMonth - month)} мес.</small>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
