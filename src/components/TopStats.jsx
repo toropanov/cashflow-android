@@ -10,13 +10,20 @@ function Metric({ label, value, accent }) {
   );
 }
 
-function TopStats({ month, netWorth, cash, passiveIncome, debt, availableCredit }) {
+function TopStats({ month, netWorth, cash, passiveIncome, debt, availableCredit, recurringExpenses }) {
   const monthLabel = `Месяц ${month}`;
-  const formattedNetWorth = `$${netWorth.toLocaleString('en-US', {
+  const formattedNetWorth = `$${Math.round(netWorth).toLocaleString('en-US', {
     maximumFractionDigits: 0,
   })}`;
-  const formattedCash = `$${cash.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
-  const formattedPassive = `$${passiveIncome.toLocaleString('en-US', {
+  const formattedCash = `$${Math.round(cash).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+  const formattedPassive = `$${Math.round(passiveIncome).toLocaleString('en-US', {
+    maximumFractionDigits: 0,
+  })}/мес`;
+  const formattedDebt = `$${Math.round(debt).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+  const formattedCredit = `$${Math.round(availableCredit).toLocaleString('en-US', {
+    maximumFractionDigits: 0,
+  })}`;
+  const formattedRecurring = `$${Math.round(recurringExpenses || 0).toLocaleString('en-US', {
     maximumFractionDigits: 0,
   })}/мес`;
   return (
@@ -31,16 +38,9 @@ function TopStats({ month, netWorth, cash, passiveIncome, debt, availableCredit 
         <div className={styles.metricsGrid}>
           <Metric label="Наличные" value={formattedCash} accent="#a469ff" />
           <Metric label="Пассивный доход" value={formattedPassive} accent="#59dabf" />
-          <Metric
-            label="Долг"
-            value={`$${debt.toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
-            accent="#ff9b9b"
-          />
-          <Metric
-            label="Кредитлайн"
-            value={`$${availableCredit.toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
-            accent="#7bd7ff"
-          />
+          <Metric label="Долг" value={formattedDebt} accent="#ff9b9b" />
+          <Metric label="Кредитлайн" value={formattedCredit} accent="#7bd7ff" />
+          <Metric label="Фикс. расходы" value={formattedRecurring} accent="#f2c265" />
         </div>
       </Card>
     </section>

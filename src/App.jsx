@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useGameStore from './store/gameStore';
 import ProfessionSelect from './screens/ProfessionSelect';
@@ -36,11 +36,11 @@ function Loader({ message }) {
 }
 
 function App() {
-  const bootstrap = useGameStore((state) => state.bootstrapFromConfigs);
   const configsReady = useGameStore((state) => state.configsReady);
   const professionId = useGameStore((state) => state.professionId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const bootstrapRef = useRef(useGameStore.getState().bootstrapFromConfigs);
 
   useEffect(() => {
     let mounted = true;
@@ -61,7 +61,7 @@ function App() {
           return acc;
         }, {});
         if (mounted) {
-          bootstrap(bundle);
+          bootstrapRef.current?.(bundle);
           setLoading(false);
         }
       } catch (err) {
@@ -76,7 +76,7 @@ function App() {
     return () => {
       mounted = false;
     };
-  }, [bootstrap]);
+  }, []);
 
   const initialRedirect = useMemo(() => {
     if (professionId) return '/app';

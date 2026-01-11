@@ -1,6 +1,6 @@
 .screen {
   min-height: 100vh;
-  padding: 2rem clamp(1rem, 4vw, 3rem) 5rem;
+  padding: 2rem 1.2rem 4rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -30,9 +30,9 @@
 }
 
 .cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
 }
 
 .profCard {

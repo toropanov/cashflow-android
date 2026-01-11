@@ -9,8 +9,9 @@ import SparkLine from '../components/SparkLine';
 import styles from './Investments.module.css';
 
 function InstrumentCard({ instrument, priceInfo, holding, onTrade }) {
-  const changePct = ((priceInfo?.lastReturn || 0) * 100).toFixed(2);
-  const value = (holding?.units || 0) * (priceInfo?.price || instrument.initialPrice);
+  const changePct = Math.round((priceInfo?.lastReturn || 0) * 100);
+  const price = Math.round(priceInfo?.price || instrument.initialPrice);
+  const value = Math.round((holding?.units || 0) * (priceInfo?.price || instrument.initialPrice));
   return (
     <Card className={styles.instrumentCard}>
       <div className={styles.instrumentHeader}>
@@ -19,12 +20,12 @@ function InstrumentCard({ instrument, priceInfo, holding, onTrade }) {
         </div>
         <div>
           <h3>{instrument.title}</h3>
-          <p>{instrument.ui?.descriptionKey || instrument.type}</p>
+          <p>Класс: {instrument.type}</p>
         </div>
         <div className={styles.priceBlock}>
-          <strong>${(priceInfo?.price || instrument.initialPrice).toFixed(2)}</strong>
-          <span className={Number(changePct) >= 0 ? styles.positive : styles.negative}>
-            {Number(changePct) >= 0 ? '▲' : '▼'} {changePct}%
+          <strong>${price.toLocaleString('en-US')}</strong>
+          <span className={changePct >= 0 ? styles.positive : styles.negative}>
+            {changePct >= 0 ? '▲' : '▼'} {Math.abs(changePct)}%
           </span>
         </div>
       </div>
@@ -34,7 +35,7 @@ function InstrumentCard({ instrument, priceInfo, holding, onTrade }) {
       <div className={styles.position}>
         <div>
           <span>Доля</span>
-          <strong>${Math.round(value).toLocaleString('en-US')}</strong>
+          <strong>${value.toLocaleString('en-US')}</strong>
         </div>
         <div>
           <span>Лотов</span>
@@ -100,7 +101,7 @@ function TradeModal({ trade, onClose, cash, holdings, onConfirm }) {
     }
     >
       <p className={styles.modalPrice}>
-        Цена: <strong>${price.toFixed(2)}</strong>
+        Цена: <strong>${Math.round(price)}</strong>
       </p>
       <Slider
         min={minOrder}
@@ -127,6 +128,7 @@ function Investments() {
   const cash = useGameStore((state) => state.cash);
   const buyInstrument = useGameStore((state) => state.buyInstrument);
   const sellInstrument = useGameStore((state) => state.sellInstrument);
+  const history = useGameStore((state) => state.history);
   const [trade, setTrade] = useState(null);
 
   const handleTrade = (instrument, mode) => {
@@ -158,12 +160,39 @@ function Investments() {
     [instruments, priceState, holdings],
   );
 
+  const netHistory = history?.netWorth || [];
+  const cashFlowHistory = history?.cashFlow || [];
+  const latestNetWorth = netHistory.length ? netHistory[netHistory.length - 1].value : 0;
+  const latestCashFlow = cashFlowHistory.length ? cashFlowHistory[cashFlowHistory.length - 1].value : 0;
+
   return (
     <div className={styles.screen}>
       <header>
         <h2>Инвестиционный холдинг</h2>
         <p>Толстые линии, градиенты и полностью оффлайн симуляция.</p>
       </header>
+      <div className={styles.charts}>
+        <Card className={styles.chartCard}>
+          <div className={styles.chartHeader}>
+            <span>Стоимость портфеля</span>
+            <strong>
+              $
+              {Math.round(latestNetWorth).toLocaleString('en-US')}
+            </strong>
+          </div>
+          <SparkLine data={netHistory} />
+        </Card>
+        <Card className={styles.chartCard}>
+          <div className={styles.chartHeader}>
+            <span>Кэш-флоу</span>
+            <strong>
+              $
+              {Math.round(latestCashFlow).toLocaleString('en-US')}
+            </strong>
+          </div>
+          <SparkLine data={cashFlowHistory} colorStart="#ff97bc" colorStop="#6ee2ff" />
+        </Card>
+      </div>
       <div className={styles.list}>
         {cards.map((card) => (
           <InstrumentCard

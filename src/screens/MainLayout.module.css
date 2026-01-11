@@ -1,5 +1,7 @@
 .layout {
   min-height: 100vh;
+  width: min(100%, 500px);
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -8,7 +10,7 @@
 }
 
 .backdrop {
-  position: fixed;
+  position: absolute;
   inset: 0;
   background: radial-gradient(circle at 20% 0%, rgba(146, 106, 255, 0.4), transparent 45%),
     radial-gradient(circle at 80% 30%, rgba(104, 226, 255, 0.4), transparent 45%),
@@ -20,7 +22,7 @@
 
 .content {
   flex: 1;
-  padding: 1.5rem clamp(1rem, 4vw, 3rem) 6rem;
+  padding: 1.5rem 1.2rem 6rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
