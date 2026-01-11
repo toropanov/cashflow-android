@@ -22,10 +22,10 @@
 
 .content {
   flex: 1;
-  padding: 1.5rem 1.2rem 6rem;
+  padding: 8rem 1.2rem 6rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .ribbon {

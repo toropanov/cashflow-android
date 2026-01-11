@@ -20,7 +20,6 @@ function InstrumentCard({ instrument, priceInfo, holding, onTrade }) {
         </div>
         <div>
           <h3>{instrument.title}</h3>
-          <p>Класс: {instrument.type}</p>
         </div>
         <div className={styles.priceBlock}>
           <strong>${price.toLocaleString('en-US')}</strong>

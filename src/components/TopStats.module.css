@@ -1,17 +1,27 @@
 .wrapper {
-  padding: 1.5rem 1.25rem 0;
+  padding: 0.9rem 1rem 0.5rem;
   color: #fefefe;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(500px, 100%);
+  z-index: 8;
+  background: rgba(7, 9, 24, 0.94);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 35px rgba(5, 8, 20, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.8rem;
-  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.4rem;
+  color: rgba(255, 255, 255, 0.75);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
 }
 
 .primaryCard {
@@ -27,25 +37,32 @@
 }
 
 .netWorthValue {
-  font-size: clamp(2rem, 6vw, 2.8rem);
-  font-weight: 700;
-  margin-top: 0.3rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-top: 0.1rem;
+}
+
+.netWorthValueRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
 }
 
 .metricsGrid {
-  margin-top: 1.2rem;
+  margin-top: 0.6rem;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.8rem;
+  gap: 0.6rem;
 }
 
 .metric {
   display: flex;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.12);
-  padding: 0.8rem;
-  border-radius: 20px;
-  min-height: 80px;
+  padding: 0.6rem;
+  border-radius: 16px;
+  min-height: 64px;
   justify-content: space-between;
 }
 
@@ -56,4 +73,35 @@
 
 .metric strong {
   font-size: 1.1rem;
+}
+
+.delta {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.deltaPositive {
+  color: #37d3a6;
+}
+
+.deltaNegative {
+  color: #ff7c8f;
+}
+
+.bump {
+  display: inline-block;
+  animation: pulseValue 0.45s ease;
+}
+
+@keyframes pulseValue {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

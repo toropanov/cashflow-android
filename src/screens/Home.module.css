@@ -80,6 +80,7 @@
   gap: 0.5rem;
 }
 
+
 .actionIcon {
   width: 52px;
   height: 52px;
@@ -121,4 +122,31 @@
 
 .lastTurn strong {
   font-size: 1.2rem;
+}
+
+.valuePositive {
+  color: #27cfa0;
+}
+
+.valueNegative {
+  color: #ff6c87;
+}
+
+.divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: rgba(9, 12, 32, 0.1);
+  margin: 0.4rem 0;
+}
+
+.netRow {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.4rem;
+}
+
+.netRow strong {
+  font-size: 1.3rem;
 }

@@ -92,6 +92,16 @@ const HOME_ACTIONS = [
     value: 1500,
     buttonText: 'Получить $1500',
   },
+  {
+    id: 'event_pitch',
+    title: 'Венчурное мероприятие',
+    description: 'Покупаешь билет: шанс сорвать $2200, либо потерять вложение.',
+    cost: 500,
+    type: 'chance',
+    chanceSuccess: 0.4,
+    success: { cashDelta: 2200 },
+    fail: { cashDelta: -600 },
+  },
 ];
 
 const RANDOM_EVENTS = [
@@ -361,7 +371,7 @@ function clampHistory(arr = [], cap = 120) {
   return arr.slice(arr.length - cap);
 }
 
-function handleHomeAction(actionId, state) {
+function handleHomeAction(actionId, state, seed) {
   const action = HOME_ACTIONS.find((item) => item.id === actionId);
   if (!action) return { patch: {}, message: '' };
   if (action.id === 'debt_payment') {
@@ -380,11 +390,12 @@ function handleHomeAction(actionId, state) {
   if (action.cost && state.cash < action.cost) {
     return { patch: {}, message: `Нужно $${action.cost}` };
   }
-  const patch = {};
+  let patch = {};
   if (action.cost) {
     patch.cash = roundMoney(state.cash - action.cost);
   }
   let message = '';
+  let nextSeed = seed;
   switch (action.effect) {
     case 'salary_up': {
       const delta = action.value || 0;
@@ -432,10 +443,30 @@ function handleHomeAction(actionId, state) {
     default:
       break;
   }
+  if (action.type === 'chance') {
+    if (action.cost && state.cash < action.cost) {
+      return { patch: {}, message: `Нужно $${action.cost}`, nextSeed };
+    }
+    const roll = uniformFromSeed(seed || ensureSeed());
+    nextSeed = roll.seed;
+    const success = roll.value < (action.chanceSuccess ?? 0.5);
+    const afterCost = roundMoney(state.cash - (action.cost || 0));
+    const baseState = { ...state, cash: afterCost };
+    const outcomeEffect = success ? action.success : action.fail;
+    const outcomePatch = applyOutcomeToState(baseState, outcomeEffect);
+    if (typeof outcomePatch.cash !== 'number') {
+      outcomePatch.cash = afterCost;
+    }
+    patch = { ...patch, ...outcomePatch };
+    const effectSummary = describeEffect(outcomeEffect);
+    message = success
+      ? `Мероприятие выстрелило${effectSummary ? ` (${effectSummary})` : ''}`
+      : `Провал мероприятия${effectSummary ? ` (${effectSummary})` : ''}`;
+  }
   if (!message) {
     message = 'Улучшение применено.';
   }
-  return { patch, message };
+  return { patch, message, nextSeed };
 }
 
 const useGameStore = create(
@@ -749,9 +780,14 @@ const useGameStore = create(
         }),
       applyHomeAction: (actionId) =>
         set((state) => {
-          const { patch, message } = handleHomeAction(actionId, state);
+          const currentSeed = state.rngSeed || ensureStoredSeed();
+          const { patch, message, nextSeed } = handleHomeAction(actionId, state, currentSeed);
+          const updates = {
+            ...patch,
+            rngSeed: nextSeed ?? currentSeed,
+          };
           if (!message) {
-            return { ...patch };
+            return updates;
           }
           const logEntry = {
             id: `${actionId}-${Date.now()}`,
@@ -759,7 +795,7 @@ const useGameStore = create(
             month: state.month,
           };
           const recentLog = [logEntry, ...(state.recentLog || [])].slice(0, 5);
-          return { ...patch, recentLog };
+          return { ...updates, recentLog };
         }),
       resetGame: () =>
         set((state) => {

@@ -4,6 +4,7 @@ const NAV_ITEMS = [
   { id: 'home', label: 'Лента', path: '/app' },
   { id: 'invest', label: 'Инвестиции', path: '/app/invest' },
   { id: 'stats', label: 'Статистика', path: '/app/stats' },
+  { id: 'reset', label: 'Сброс', path: '/choose' },
 ];
 
 function Icon({ id, active }) {
@@ -32,6 +33,37 @@ function Icon({ id, active }) {
           <rect x="17" y="4" width="3.5" height="16" rx="1.5" fill={stroke} opacity="0.7" />
         </svg>
       );
+    case 'reset':
+      return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M5 4V10H11"
+            stroke={stroke}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M19 20V14H13"
+            stroke={stroke}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M19 14C18 10 15 6 11 6C8 6 6 8 5 10"
+            stroke={stroke}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M5 20C6 22 8.5 24 13 24C16 24 18 22 19 20"
+            stroke={stroke}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
     default:
       return (
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
@@ -47,7 +79,7 @@ function Icon({ id, active }) {
   }
 }
 
-function BottomNav({ current, onChange }) {
+function BottomNav({ current, onChange, onReset }) {
   return (
     <nav className={styles.nav}>
       {NAV_ITEMS.map((item) => {
@@ -57,7 +89,7 @@ function BottomNav({ current, onChange }) {
             key={item.id}
             type="button"
             className={`${styles.item} ${active ? styles.active : ''}`}
-            onClick={() => onChange(item.path)}
+            onClick={() => (item.id === 'reset' ? onReset?.() : onChange(item.path))}
           >
             <span className={styles.icon}>
               <Icon id={item.id} active={active} />

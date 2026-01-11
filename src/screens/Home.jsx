@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import useGameStore, { homeActions } from '../store/gameStore';
 import Card from '../components/Card';
 import GradientButton from '../components/GradientButton';
@@ -29,7 +28,7 @@ function ActionCard({ action, onSelect, cash }) {
   );
 }
 
-function LastTurn({ data }) {
+function LastTurn({ data, showReturns }) {
   if (!data) {
     return (
       <div className={styles.placeholder}>
@@ -37,34 +36,44 @@ function LastTurn({ data }) {
       </div>
     );
   }
+  const formatter = (value) => `$${Math.round(value).toLocaleString('en-US')}`;
+  const recurring = data.recurringExpenses || 0;
+  const net =
+    Math.round(data.salary + data.passiveIncome - data.livingCost - recurring - (data.debtInterest || 0));
+  const entries = [
+    { label: 'Зарплата', value: data.salary, positive: true },
+    { label: 'Пассивно', value: data.passiveIncome, positive: true },
+    { label: 'Бытовые', value: data.livingCost, positive: false },
+    { label: 'Фикс.расходы', value: recurring, positive: false },
+    { label: 'Проценты долга', value: data.debtInterest || 0, positive: false },
+  ];
   return (
     <div className={styles.lastTurn}>
-      <div>
-        <span>Зарплата</span>
-        <strong>${Math.round(data.salary).toLocaleString('en-US')}</strong>
-      </div>
-      <div>
-        <span>Пассивно</span>
-        <strong>${Math.round(data.passiveIncome).toLocaleString('en-US')}</strong>
-      </div>
-      <div>
-        <span>Бытовые</span>
-        <strong>${Math.round(data.livingCost).toLocaleString('en-US')}</strong>
-      </div>
-      <div>
-        <span>Фикс. расходы</span>
-        <strong>${Math.round(data.recurringExpenses || 0).toLocaleString('en-US')}</strong>
-      </div>
+      {entries.map((entry) => (
+        <div key={entry.label}>
+          <span>{entry.label}</span>
+          <strong className={entry.positive ? styles.valuePositive : styles.valueNegative}>
+            {formatter(entry.value)}
+          </strong>
+        </div>
+      ))}
       <div>
         <span>Доходность портфеля</span>
         <strong>
-          {Object.keys(data.returns || {}).length
+          {showReturns && Object.keys(data.returns || {}).length
             ? `${Math.round(
                 (Object.values(data.returns).reduce((acc, value) => acc + value, 0) /
                   Object.keys(data.returns).length) *
                   100,
               )}%`
             : '—'}
+        </strong>
+      </div>
+      <div className={styles.divider} />
+      <div className={styles.netRow}>
+        <span>Итог месяца</span>
+        <strong className={net >= 0 ? styles.valuePositive : styles.valueNegative}>
+          {formatter(net)}
         </strong>
       </div>
     </div>
@@ -78,12 +87,12 @@ function Home() {
   const cash = useGameStore((state) => state.cash);
   const currentEvent = useGameStore((state) => state.currentEvent);
   const availableActions = useGameStore((state) => state.availableActions || homeActions);
+  const hasInvestments = useGameStore((state) => Object.keys(state.investments || {}).length > 0);
   const drawCredit = useGameStore((state) => state.drawCredit);
   const serviceDebt = useGameStore((state) => state.serviceDebt);
   const debt = useGameStore((state) => state.debt);
   const creditLimit = useGameStore((state) => state.creditLimit);
   const availableCredit = useGameStore((state) => state.availableCredit);
-  const resetGame = useGameStore((state) => state.resetGame);
   const [leverage, setLeverage] = useState(1.5);
   const baseDraw = 600;
   const creditAmount = useMemo(() => Math.round(baseDraw * leverage), [leverage]);
@@ -94,7 +103,7 @@ function Home() {
         <header>
           <h3>Результат последнего месяца</h3>
         </header>
-        <LastTurn data={lastTurn} />
+        <LastTurn data={lastTurn} showReturns={hasInvestments} />
       </Card>
       {currentEvent && (
         <Card className={styles.eventCard}>
@@ -149,9 +158,6 @@ function Home() {
         </div>
       </section>
       <GradientButton onClick={advanceMonth}>Следующий месяц</GradientButton>
-      <Button variant="ghost" onClick={resetGame}>
-        Начать заново
-      </Button>
     </div>
   );
 }
