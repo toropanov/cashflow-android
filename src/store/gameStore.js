@@ -781,6 +781,16 @@ const useGameStore = create(
               id: `stoploss-${Date.now()}-${Math.random()}`,
               month: state.month + 1,
               text: warning,
+              type: 'stoploss',
+            };
+            recentLog = [entry, ...recentLog].slice(0, 5);
+          });
+          marketWarnings.forEach((warning) => {
+            const entry = {
+              id: `market-${Date.now()}-${Math.random()}`,
+              month: state.month + 1,
+              text: warning,
+              type: 'market',
             };
             recentLog = [entry, ...recentLog].slice(0, 5);
           });

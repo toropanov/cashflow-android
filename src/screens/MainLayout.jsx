@@ -13,8 +13,7 @@ import lawyerImg from '../assets/proffesions/low.png';
 import doctorImg from '../assets/proffesions/doctor.png';
 import fireImg from '../assets/proffesions/fire.png';
 import managerImg from '../assets/proffesions/manager.png';
-import successImg from '../assets/popup_success.png';
-import failImg from '../assets/popup_fail.png';
+import neutralImg from '../assets/popup_neutral.png';
 import Modal from '../components/Modal';
 
 function getEventMessage(event = {}) {
@@ -150,12 +149,6 @@ function MainLayout() {
       (lastTurn.livingCost || 0) + (lastTurn.recurringExpenses || 0) + (lastTurn.debtInterest || 0),
     );
     const net = incomes - expenses;
-    const mood =
-      currentEvent?.type === 'negative' || net < 0
-        ? 'negative'
-        : currentEvent?.type === 'positive' || net >= 0
-          ? 'positive'
-          : 'neutral';
     setTurnSummary({
       month: summaryMonth,
       incomes,
@@ -164,8 +157,6 @@ function MainLayout() {
       logs,
       event: currentEvent ? { ...currentEvent } : null,
       stopLoss: lastTurn.stopLossWarnings || [],
-      marketWarnings: (lastTurn.marketWarnings || []).slice(0, 2),
-      mood,
     });
     setSummaryReady(true);
     setPendingSummary(false);
@@ -264,18 +255,11 @@ function MainLayout() {
         {turnSummary && (
           <>
             <div className={styles.turnIllustration}>
-              <img
-                src={turnSummary.mood === 'negative' ? failImg : successImg}
-                alt={turnSummary.mood === 'negative' ? 'Невдача хода' : 'Успех хода'}
-              />
+              <img src={neutralImg} alt="Ход завершён" />
             </div>
             <div className={styles.turnSummary}>
-              <div
-                className={`${styles.turnMood} ${
-                  turnSummary.mood === 'negative' ? styles.turnMoodNegative : styles.turnMoodPositive
-                }`}
-              >
-                {turnSummary.mood === 'negative' ? '🙁 Невесёлый ход' : '🎉 Удачный ход'}
+              <div className={styles.turnSummaryNotice}>
+                <span>Ход завершён</span>
               </div>
               {turnSummary.event && (
                 <div className={styles.turnEvent}>
@@ -302,27 +286,15 @@ function MainLayout() {
                   </strong>
                 </div>
               </div>
-              {turnSummary.stopLoss?.length > 0 && (
-                <div className={styles.turnWarnings}>
-                  <span>Авто-стоп-лосс</span>
-                  <ul>
-                    {turnSummary.stopLoss.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
               <div className={styles.turnLog}>
                 <span>События хода</span>
                 <ul>
-                  {turnSummary.marketWarnings?.map((warning) => (
-                    <li key={warning} className={styles.turnLogWarning}>
-                      <p>{warning}</p>
-                    </li>
-                  ))}
                   {turnSummary.logs.length ? (
                     turnSummary.logs.map((entry) => (
-                      <li key={entry.id}>
+                      <li
+                        key={entry.id}
+                        className={entry.type === 'market' ? styles.turnLogWarning : undefined}
+                      >
                         <p>{entry.text}</p>
                         {typeof entry.amount === 'number' && (
                           <span className={styles.turnEventAmount}>{formatMoney(entry.amount)}</span>
