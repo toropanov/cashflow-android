@@ -169,13 +169,12 @@
 .netStat {
   padding: 0.6rem 0.9rem;
   border-radius: 18px;
-  background: linear-gradient(135deg, #edf4ff, #fff0fb);
-  border: 1px solid rgba(21, 52, 102, 0.25);
+  background: linear-gradient(120deg, #e9f3ff, #fdfbff);
+  border: 1px solid rgba(21, 52, 102, 0.15);
   box-shadow: 0 10px 30px rgba(18, 33, 70, 0.15);
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.2rem;
+  justify-content: space-between;
+  align-items: baseline;
   margin-bottom: 0.4rem;
 }
 
@@ -297,18 +296,6 @@
   background: rgba(219, 244, 233, 0.7);
 }
 
-.investDeltaRow {
-  margin-top: 0.6rem;
-  padding: 0.6rem 0.9rem;
-  border-radius: 18px;
-  background: linear-gradient(120deg, rgba(233, 248, 255, 0.9), rgba(240, 230, 255, 0.85));
-  border: 1px solid rgba(90, 130, 192, 0.3);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.95rem;
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.6);
-}
 
 .stopLossBlock {
   margin-top: 0.6rem;
@@ -381,8 +368,16 @@
 .infoList div {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: rgba(27, 41, 70, 0.85);
+}
+
+.infoList div span {
+  color: rgba(29, 40, 68, 0.7);
+}
+
+.infoList div strong {
+  font-size: 0.9rem;
 }
 
 .infoPositive strong {

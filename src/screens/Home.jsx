@@ -5,6 +5,12 @@ import Button from '../components/Button';
 import { calculateHoldingsValue, calculatePassiveIncome } from '../domain/finance';
 import styles from './Home.module.css';
 import { spriteStyle } from '../utils/iconSprite';
+import teacherImg from '../assets/proffesions/teacher.png';
+import devImg from '../assets/proffesions/dev.png';
+import lawyerImg from '../assets/proffesions/low.png';
+import doctorImg from '../assets/proffesions/doctor.png';
+import fireImg from '../assets/proffesions/fire.png';
+import managerImg from '../assets/proffesions/manager.png';
 
 const PASSIVE_MULTIPLIERS = {
   bonds: 0.0022,
@@ -13,6 +19,14 @@ const PASSIVE_MULTIPLIERS = {
 };
 
 const FORECAST_TURNS = 6;
+const PROFESSION_IMAGES = {
+  teacher: teacherImg,
+  programmer: devImg,
+  lawyer: lawyerImg,
+  dentist: doctorImg,
+  firefighter: fireImg,
+  sales_manager: managerImg,
+};
 
 function formatUSD(value) {
   const rounded = Math.round(value || 0);
@@ -145,7 +159,7 @@ function ActionCard({ action, onSelect, cash, compact = false, variant = 'defaul
   );
 }
 
-function LastTurn({ data, showReturns, summary, investmentDelta, passiveBreakdown = [] }) {
+function LastTurn({ data, summary, passiveBreakdown = [] }) {
   const formatter = (value) => formatUSD(value);
   const passiveLabel = `${formatter(summary.passiveIncome)}/мес`;
   const recurringActual = data?.recurringExpenses ?? summary.recurringExpenses;
@@ -193,18 +207,6 @@ function LastTurn({ data, showReturns, summary, investmentDelta, passiveBreakdow
             <small>{`Прогноз через ${FORECAST_TURNS} ходов: ~${formatUSD(netForecast)}`}</small>
           </div>
         </div>
-        {showReturns && (
-          <div className={styles.investDeltaRow}>
-            <span>Доход портфеля за ход</span>
-            <strong className={investmentDelta >= 0 ? styles.valuePositive : styles.valueNegative}>
-              {Number.isFinite(investmentDelta)
-                ? investmentDelta >= 0
-                  ? `+$${Math.round(investmentDelta).toLocaleString('en-US')}`
-                  : `-$${Math.abs(Math.round(investmentDelta)).toLocaleString('en-US')}`
-                : '—'}
-            </strong>
-          </div>
-        )}
       </>
     );
   };
@@ -225,6 +227,19 @@ function LastTurn({ data, showReturns, summary, investmentDelta, passiveBreakdow
             <span>Кредит</span>
             <strong>{formatter(summary.debt)}</strong>
             <small>{`Лимит: ${formatter(Math.max(0, (summary.availableCredit || 0) + summary.debt))}`}</small>
+          </div>
+          <div>
+            <span>Пассивный доход</span>
+            <strong>{passiveLabel}</strong>
+            <small>
+              {passiveGap >= 0
+                ? 'Перекрывает фикс. расходы'
+                : `Нужно ещё ${formatter(Math.abs(passiveGap))}/мес`}
+            </small>
+          </div>
+          <div>
+            <span>Фикс. расходы</span>
+            <strong>{formatter(summary.recurringExpenses)}/мес</strong>
           </div>
         </div>
       </div>
@@ -375,7 +390,6 @@ function Home() {
 
   const totalHolding = Object.values(positions).reduce((sum, pos) => sum + (pos.currentValue || 0), 0);
   const totalCostBasis = Object.values(positions).reduce((sum, pos) => sum + (pos.costBasis || 0), 0);
-  const investmentDelta = totalHolding && totalCostBasis ? totalHolding - totalCostBasis : 0;
   const passiveIncomeEffective = passiveIncomeVal + dealIncomeVal;
 
   const passiveBreakdown = useMemo(() => {
@@ -405,7 +419,6 @@ function Home() {
   }, [investments, priceState, instrumentMap, dealParticipations, passiveIncomeEffective]);
 
   const recurringExpenses = useGameStore((state) => state.recurringExpenses || 0);
-  const showPortfolioDelta = Object.values(positions).some((pos) => (pos.currentValue || 0) > 0.01);
   const summary = {
     netWorth,
     cash,
@@ -479,13 +492,7 @@ function Home() {
         </Card>
       )}
       <Card className={styles.card}>
-        <LastTurn
-          data={lastTurn}
-          showReturns={showPortfolioDelta}
-          summary={summary}
-          investmentDelta={investmentDelta}
-          passiveBreakdown={passiveBreakdown}
-        />
+        <LastTurn data={lastTurn} summary={summary} passiveBreakdown={passiveBreakdown} />
         {salaryProgression && (
           <div className={styles.professionGrowth}>
             <div>

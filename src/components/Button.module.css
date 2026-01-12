@@ -36,7 +36,7 @@
 }
 
 .primary {
-  background: linear-gradient(120deg, #8ac8ff, #c4f1d6);
+  background: linear-gradient(206deg, #dfe9ff, #bdd7ff, #69c7f5);
   color: #0c1d34;
 }
 
@@ -52,12 +52,12 @@
 }
 
 .danger {
-  background: linear-gradient(120deg, #ff8ea2, #ffc18c);
+  background: linear-gradient(206deg, #dfe9ff, #bdd7ff, #69c7f5);
   color: #4b1620;
 }
 
 .success {
-  background: linear-gradient(120deg, #2dd5a7, #9be15d);
+  background: linear-gradient(206deg, #dfe9ff, #bdd7ff, #69c7f5);
   color: #041c11;
 }
 

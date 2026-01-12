@@ -29,7 +29,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.45rem 0.8rem;
+  padding: 5px 0.8rem 0;
   min-height: var(--header-height);
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(14px);
@@ -48,17 +48,37 @@
   flex: 1;
 }
 
-.headerTitle {
+.headerInfo {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.8rem;
+  flex: 1;
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
+.avatarWrap {
+  display: flex;
+  align-items: flex-end;
+}
+
+.headerTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.professionImage {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  align-self: flex-end;
+}
+
+.professionIcon {
+  width: 60px;
+  height: 60px;
   border-radius: 12px;
   box-shadow: 0 8px 16px rgba(40, 66, 111, 0.18);
+  align-self: flex-end;
 }
 
 .professionLabel {

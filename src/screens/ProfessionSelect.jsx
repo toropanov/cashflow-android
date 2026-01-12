@@ -2,9 +2,14 @@ import { useMemo, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useGameStore from '../store/gameStore';
 import Card from '../components/Card';
-import Button from '../components/Button';
 import GradientButton from '../components/GradientButton';
 import styles from './ProfessionSelect.module.css';
+import teacherImg from '../assets/proffesions/teacher.png';
+import devImg from '../assets/proffesions/dev.png';
+import lawyerImg from '../assets/proffesions/low.png';
+import doctorImg from '../assets/proffesions/doctor.png';
+import fireImg from '../assets/proffesions/fire.png';
+import managerImg from '../assets/proffesions/manager.png';
 
 const DIFFICULTY_OPTIONS = [
   { id: 'easy', label: 'Лёгкий', description: 'Реже негативные события.' },
@@ -13,6 +18,15 @@ const DIFFICULTY_OPTIONS = [
 ];
 
 const formatMoney = (value) => `$${Math.round(value || 0).toLocaleString('en-US')}`;
+
+const PROFESSION_IMAGES = {
+  teacher: teacherImg,
+  programmer: devImg,
+  lawyer: lawyerImg,
+  dentist: doctorImg,
+  firefighter: fireImg,
+  sales_manager: managerImg,
+};
 
 function summarizeGoal(rule) {
   if (!rule) {
@@ -42,11 +56,12 @@ function ProfCard({ profession, onSelect }) {
     { label: 'Кред. потолок', value: formatMoney(profession.creditLimitBase || 0) },
   ];
   const startingDebt = profession.startingDebt || 0;
+  const avatarSrc = PROFESSION_IMAGES[profession.id];
   return (
-    <Card className={styles.profCard}>
+    <Card className={styles.profCard} onClick={() => onSelect(profession.id)}>
       <div className={styles.summaryRow}>
         <div className={styles.avatar}>
-          <span>{profession.title.slice(0, 1)}</span>
+          {avatarSrc ? <img src={avatarSrc} alt={profession.title} /> : <span>{profession.title.slice(0, 1)}</span>}
         </div>
         <div>
           <h3>{profession.title}</h3>
@@ -64,9 +79,9 @@ function ProfCard({ profession, onSelect }) {
       {startingDebt > 0 && (
         <div className={styles.debtTag}>Стартовый долг {formatMoney(startingDebt)}</div>
       )}
-      <Button variant="primary" onClick={() => onSelect(profession.id)}>
-        Играть
-      </Button>
+      <button className={styles.playIcon} type="button" aria-hidden="true">
+        ▶
+      </button>
     </Card>
   );
 }

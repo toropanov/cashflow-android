@@ -6,6 +6,10 @@ import AssetsSectionSwitch from '../components/AssetsSectionSwitch';
 import styles from './Deals.module.css';
 import { DEAL_TEMPLATES } from '../domain/deals';
 
+const formatNumber = (value = 0) =>
+  Number(value).toLocaleString('en-US', { maximumFractionDigits: 2, minimumFractionDigits: 0 });
+const formatMoney = (value = 0) => `$${formatNumber(value)}`;
+
 function pluralizeTurns(value) {
   const num = Math.max(0, Math.round(value));
   const abs = Math.abs(num) % 100;
@@ -20,21 +24,6 @@ function pluralizeTurns(value) {
     return `${num} хода`;
   }
   return `${num} ходов`;
-}
-
-function Meter({ label, value }) {
-  const total = 5;
-  const active = Math.max(0, Math.min(total, value || 0));
-  return (
-    <div className={styles.meter}>
-      <span>{label}</span>
-      <div>
-        {Array.from({ length: total }).map((_, index) => (
-          <i key={`${label}-${index}`} className={index < active ? styles.meterActive : ''} />
-        ))}
-      </div>
-    </div>
-  );
 }
 
 function DealCard({ deal, windowMeta, onParticipate, disabled, active }) {
@@ -60,10 +49,19 @@ function DealCard({ deal, windowMeta, onParticipate, disabled, active }) {
         <span>{windowText}</span>
         {slotsText && <span>{slotsText}</span>}
       </div>
-      <div className={styles.dealMeters}>
-        <Meter label="Риск" value={deal.riskMeter} />
-        <Meter label="Ликвидность" value={deal.liquidityMeter} />
-        <div className={styles.lockBadge}>Срок: {deal.lockMonths} мес.</div>
+      <div className={styles.dealStats}>
+        <div>
+          <span>Вход</span>
+          <strong>{formatMoney(deal.entryCost)}</strong>
+        </div>
+        <div>
+          <span>Доход</span>
+          <strong>{deal.monthlyPayout ? `+${formatMoney(deal.monthlyPayout)}/мес` : '—'}</strong>
+        </div>
+        <div>
+          <span>Срок</span>
+          <strong>{deal.lockMonths || deal.durationMonths} мес.</strong>
+        </div>
       </div>
       {deal.effects?.length > 0 && (
         <div className={styles.dealEffects}>
@@ -75,7 +73,7 @@ function DealCard({ deal, windowMeta, onParticipate, disabled, active }) {
           ))}
         </div>
       )}
-      <p className={styles.risk}>Риск: {deal.riskNote}</p>
+      {deal.riskNote && <p className={styles.dealNote}>{deal.riskNote}</p>}
       <ul className={styles.featureList}>
         {deal.features.map((feature) => (
           <li key={feature}>{feature}</li>
@@ -171,9 +169,8 @@ function Deals() {
                   </span>
                 </div>
                 <p>
-                  Заработано: ${Math.round(deal.profitEarned).toLocaleString('en-US')} · Ежемесячно{' '}
-                  {deal.monthlyPayout > 0 ? `+$${deal.monthlyPayout}` : '0'} · Срок {deal.durationMonths} мес. ·{' '}
-                  {deal.risk}
+                  Заработано: {formatMoney(deal.profitEarned)} · Ежемесячно{' '}
+                  {deal.monthlyPayout > 0 ? `+${formatMoney(deal.monthlyPayout)}` : '0'} · Срок {deal.durationMonths} мес.
                 </p>
                 <div className={styles.progressBar}>
                   <div style={{ width: `${percent}%` }} />

@@ -1031,6 +1031,7 @@ const useGameStore = create(
             debt: roundMoney(state.debt + draw),
             creditBucket: roundMoney((state.creditBucket || 0) + draw),
             creditLockedMonth: state.month,
+            actionsThisTurn: (state.actionsThisTurn || 0) + 1,
           };
         }),
       serviceDebt: (amount = 600) =>
@@ -1046,6 +1047,7 @@ const useGameStore = create(
             cash: roundMoney(state.cash - payment - fee),
             debt: roundMoney(state.debt - payment),
             creditLockedMonth: state.month,
+            actionsThisTurn: (state.actionsThisTurn || 0) + 1,
           };
         }),
       applyHomeAction: (actionId, options = {}) =>

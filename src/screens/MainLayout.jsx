@@ -6,6 +6,12 @@ import BottomNav from '../components/BottomNav';
 import { calculateHoldingsValue, calculatePassiveIncome } from '../domain/finance';
 import styles from './MainLayout.module.css';
 import { spriteStyle, getProfessionIcon } from '../utils/iconSprite';
+import teacherImg from '../assets/proffesions/teacher.png';
+import devImg from '../assets/proffesions/dev.png';
+import lawyerImg from '../assets/proffesions/low.png';
+import doctorImg from '../assets/proffesions/doctor.png';
+import fireImg from '../assets/proffesions/fire.png';
+import managerImg from '../assets/proffesions/manager.png';
 import Modal from '../components/Modal';
 
 function StatusRibbon({ win, lose }) {
@@ -104,6 +110,7 @@ function MainLayout() {
   );
 
   const netWorth = storeData.cash + holdingsValue - storeData.debt;
+  const professionImage = storeData.profession ? PROFESSION_IMAGES[storeData.profession.id] : null;
 
   const formatMoney = (value) => {
     const rounded = Math.round(value);
@@ -160,12 +167,23 @@ function MainLayout() {
       <div className={styles.backdrop} />
       <header className={styles.headerBar}>
         <div className={styles.headerInfo}>
+          <div className={styles.avatarWrap}>
+            {professionImage ? (
+              <img
+                src={professionImage}
+                alt={storeData.profession?.title || 'Профессия'}
+                className={styles.professionImage}
+              />
+            ) : (
+              <div
+                className={styles.professionIcon}
+                style={spriteStyle(getProfessionIcon(storeData.profession))}
+              />
+            )}
+          </div>
           <div className={styles.headerTitle}>
-            <div className={styles.avatar} style={spriteStyle(getProfessionIcon(storeData.profession))} />
-            <div>
-              <span className={styles.professionLabel}>Профессия</span>
-              <strong className={styles.professionTitle}>{storeData.profession?.title || 'Профиль'}</strong>
-            </div>
+            <span className={styles.professionLabel}>Профессия</span>
+            <strong className={styles.professionTitle}>{storeData.profession?.title || 'Профиль'}</strong>
           </div>
           <div className={styles.headerStats}>
             <div>
@@ -287,3 +305,11 @@ function MainLayout() {
 }
 
 export default MainLayout;
+const PROFESSION_IMAGES = {
+  teacher: teacherImg,
+  programmer: devImg,
+  lawyer: lawyerImg,
+  dentist: doctorImg,
+  firefighter: fireImg,
+  sales_manager: managerImg,
+};

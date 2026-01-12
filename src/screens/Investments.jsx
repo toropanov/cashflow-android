@@ -222,6 +222,8 @@ function Investments() {
   const availableCredit = useGameStore((state) => state.availableCredit);
   const loanRules = useGameStore((state) => state.configs?.rules?.loans);
   const [creditAmount, setCreditAmount] = useState(1000);
+  const [creditConfirm, setCreditConfirm] = useState(null);
+  const creditConfirmRef = useRef(null);
   const month = useGameStore((state) => state.month);
   const tradeLocks = useGameStore((state) => state.tradeLocks || {});
   const creditLocked = useGameStore((state) => state.creditLockedMonth === state.month);
@@ -260,6 +262,36 @@ function Investments() {
       setCreditAmount(maxDraw);
     }
   }, [availableCredit, creditAmount]);
+
+  useEffect(
+    () => () => {
+      if (creditConfirmRef.current) {
+        clearTimeout(creditConfirmRef.current);
+      }
+    },
+    [],
+  );
+
+  const flashCreditConfirm = (type) => {
+    setCreditConfirm(type);
+    if (creditConfirmRef.current) {
+      clearTimeout(creditConfirmRef.current);
+    }
+    creditConfirmRef.current = setTimeout(() => setCreditConfirm(null), 900);
+  };
+
+  const handleDrawCredit = () => {
+    const amount = Math.min(creditAmount, Math.max(availableCredit, 0));
+    if (amount <= 0 || creditLocked) return;
+    drawCredit(amount);
+    flashCreditConfirm('draw');
+  };
+
+  const handleRepay = () => {
+    if (creditAmount <= 0 || creditLocked || debt <= 0 || cash <= 0) return;
+    serviceDebt(creditAmount);
+    flashCreditConfirm('repay');
+  };
 
   const estimatedPayment = useMemo(() => {
     if (!loanRules) return null;
@@ -330,20 +362,21 @@ function Investments() {
                 step={sliderStep}
                 value={Math.min(creditAmount, sliderMax)}
                 onChange={(value) => setCreditAmount(Math.round(value))}
+                disabled={creditLocked}
               />
             );
           })()
         ) : (
-          <Slider min={0} max={0} step={1} value={0} onChange={() => {}} />
+          <Slider min={0} max={0} step={1} value={0} onChange={() => {}} disabled />
         )}
         <div className={styles.creditActions}>
           <div className={styles.creditActionColumn}>
             <Button
               variant="primary"
-              onClick={() => drawCredit(Math.min(creditAmount, Math.max(availableCredit, 0)))}
+              onClick={handleDrawCredit}
               disabled={availableCredit <= 0 || creditLocked}
             >
-              Взять ${creditAmount}
+              {creditConfirm === 'draw' ? 'Готово' : `Взять ${formatUSD(creditAmount)}`}
             </Button>
             {estimatedPayment && (
               <small className={styles.paymentHint}>
@@ -354,10 +387,10 @@ function Investments() {
           <div className={styles.creditActionColumn}>
             <Button
               variant="danger"
-              onClick={() => serviceDebt(creditAmount)}
+              onClick={handleRepay}
               disabled={debt <= 0 || cash <= 0 || creditLocked}
             >
-              Погасить ${creditAmount}
+              {creditConfirm === 'repay' ? 'Готово' : `Погасить ${formatUSD(creditAmount)}`}
             </Button>
           </div>
         </div>
