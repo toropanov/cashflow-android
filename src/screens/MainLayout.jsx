@@ -228,6 +228,24 @@ function MainLayout() {
       </header>
       <main className={styles.content} ref={contentRef}>
         <StatusRibbon win={storeData.winCondition} lose={storeData.loseCondition} />
+        {currentEvent && (
+          <Card
+            className={`${styles.eventCard} ${
+              currentEvent.type === 'positive'
+                ? styles.eventPositive
+                : currentEvent.type === 'negative'
+                  ? styles.eventNegative
+                  : ''
+            }`}
+          >
+            <div className={styles.eventHeader}>
+              <p className={styles.eventTitle}>{currentEvent.message || currentEvent.description}</p>
+              {typeof currentEvent.effect?.cashDelta === 'number' && (
+                <span className={styles.eventAmount}>{formatMoney(currentEvent.effect.cashDelta)}</span>
+              )}
+            </div>
+          </Card>
+        )}
         <Outlet />
       </main>
       <BottomNav

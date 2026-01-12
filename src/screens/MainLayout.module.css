@@ -290,6 +290,28 @@
   color: rgba(45, 32, 7, 0.9);
 }
 
+.eventCard {
+  margin-bottom: 0.8rem;
+}
+
+.eventHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.eventTitle {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(19, 33, 71, 0.9);
+  line-height: 1.4;
+}
+
+.eventAmount {
+  font-weight: 600;
+  color: #c0435e;
+}
+
 .nextMoveButton {
   background: linear-gradient(206deg, #fff3cb, #e2d654, #e5a302) !important;
   color: #2d1800 !important;
