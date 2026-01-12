@@ -202,13 +202,7 @@ function ProfessionSelect() {
           <ProfCard key={profession.id} profession={profession} onSelect={handleSelect} />
         ))}
       </div>
-      <GradientButton
-        onClick={handleRandom}
-        disabled={isRolling}
-        icon="🎲"
-        size="compact"
-        rolling={isRolling}
-      >
+      <GradientButton onClick={handleRandom} disabled={isRolling} icon="🎲" rolling={isRolling}>
         Случайно
       </GradientButton>
       <div className={styles.sparkles}>
