@@ -18,7 +18,16 @@ const clampAmount = (value, max) => {
   return Math.round(clamped / LOT_STEP) * LOT_STEP;
 };
 
-function InstrumentCard({ instrument, priceInfo, holding, cash, onBuy, onSell }) {
+function InstrumentCard({
+  instrument,
+  priceInfo,
+  holding,
+  cash,
+  onBuy,
+  onSell,
+  currentMonth,
+  lastTradeAction,
+}) {
   const rawPrice = priceInfo?.price || instrument.initialPrice;
   const changePct = Math.round((priceInfo?.lastReturn || 0) * 100);
   const price = Math.round(rawPrice);
@@ -50,8 +59,13 @@ function InstrumentCard({ instrument, priceInfo, holding, cash, onBuy, onSell })
 
   const lotsFromAmount = (amount) => Math.max(1, Math.round(amount / LOT_STEP));
 
+  const sellLocked =
+    lastTradeAction?.type === 'buy' &&
+    lastTradeAction.instrumentId === instrument.id &&
+    lastTradeAction.turn === currentMonth;
+
   const togglePanel = (mode) => {
-    if (mode === 'sell' && !hasPosition) return;
+    if (mode === 'sell' && (!hasPosition || sellLocked)) return;
     setPanelMode((prev) => (prev === mode ? null : mode));
   };
 
@@ -129,14 +143,16 @@ function InstrumentCard({ instrument, priceInfo, holding, cash, onBuy, onSell })
             variant="secondary"
             onClick={() => togglePanel('sell')}
             className={`${styles.sellButton} ${sellProfit >= 0 ? styles.sellPositive : styles.sellNegative}`}
+            disabled={sellLocked}
           >
-            {sellLabel}
+            {sellLocked ? 'Продажа позже' : sellLabel}
           </Button>
         )}
         <Button variant="primary" onClick={() => togglePanel('buy')} disabled={buyDisabled}>
           Купить
         </Button>
       </div>
+      {sellLocked && <span className={styles.sellLockHint}>Продажа доступна со следующего хода</span>}
       {renderPanel()}
     </Card>
   );
@@ -157,6 +173,8 @@ function Investments() {
   const availableCredit = useGameStore((state) => state.availableCredit);
   const [creditAmount, setCreditAmount] = useState(1000);
   const [feedback, setFeedback] = useState(null);
+  const month = useGameStore((state) => state.month);
+  const lastTradeAction = useGameStore((state) => state.lastTradeAction);
   const filteredInstruments = useMemo(
     () => instruments.filter((instrument) => instrument.type !== 'bonds'),
     [instruments],
@@ -221,6 +239,8 @@ function Investments() {
             cash={cash}
             onBuy={(amount) => handleBuy(card.instrument, amount)}
             onSell={(amount) => handleSell(card.instrument, amount)}
+            currentMonth={month}
+            lastTradeAction={lastTradeAction}
           />
         ))}
       </div>

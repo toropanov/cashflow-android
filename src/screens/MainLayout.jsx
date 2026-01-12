@@ -36,6 +36,7 @@ function MainLayout() {
     })),
   );
   const advanceMonth = useGameStore((state) => state.advanceMonth);
+  const actionsCount = useGameStore((state) => state.actionsThisTurn || 0);
   const [confirmingFinish, setConfirmingFinish] = useState(false);
   const [diceAnimating, setDiceAnimating] = useState(false);
   const confirmButtonRef = useRef(null);
@@ -155,6 +156,7 @@ function MainLayout() {
         confirmingFinish={confirmingFinish}
         diceAnimating={diceAnimating}
         actionRef={confirmButtonRef}
+        actionsCount={actionsCount}
       />
     </div>
   );

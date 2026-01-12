@@ -46,6 +46,13 @@
   justify-content: center;
 }
 
+.iconWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .action {
   flex: 1.6;
   border: none;
@@ -61,12 +68,29 @@
   font-weight: 600;
   box-shadow: 0 12px 28px rgba(254, 196, 74, 0.35);
   cursor: pointer;
+  position: relative;
 }
 
 .actionLabel {
   font-size: 0.95rem;
   margin-top: -5px;
   margin-bottom: 5px;
+}
+
+.actionBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #1d2b44;
+  color: #fff;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 0.65rem;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .action:active {

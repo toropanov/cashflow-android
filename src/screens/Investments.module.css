@@ -14,19 +14,16 @@
   padding: 0.8rem 1rem;
   border-radius: 16px;
   font-weight: 600;
-  border: 1px solid transparent;
 }
 
 .feedbackPositive {
   background: rgba(109, 221, 187, 0.2);
   color: #125b43;
-  border-color: rgba(109, 221, 187, 0.4);
 }
 
 .feedbackNegative {
   background: rgba(255, 166, 185, 0.2);
   color: #7c2a3a;
-  border-color: rgba(255, 166, 185, 0.4);
 }
 
 .list {
@@ -94,7 +91,6 @@
 
 .tradePanel {
   margin-top: 0.8rem;
-  border: 1px solid rgba(31, 55, 96, 0.12);
   border-radius: 18px;
   padding: 0.8rem;
   background: rgba(243, 247, 255, 0.7);
@@ -129,6 +125,12 @@
   flex: 1;
 }
 
+.sellLockHint {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: #b04a3a;
+}
+
 .tradeHint {
   font-size: 0.8rem;
   color: rgba(32, 48, 85, 0.65);
@@ -136,7 +138,6 @@
 
 .sellButton {
   background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(28, 44, 80, 0.12);
   box-shadow: 0 12px 25px rgba(30, 47, 83, 0.15);
   flex: 1;
 }

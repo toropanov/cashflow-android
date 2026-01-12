@@ -298,6 +298,8 @@ function buildProfessionState(baseState, profession) {
     availableActions: defaultActions,
     activeMonthlyOffers: [],
     dealParticipations: [],
+    actionsThisTurn: 0,
+    lastTradeAction: null,
     monthlyOfferUsed: false,
     joblessMonths: 0,
     salaryCutMonths: 0,
@@ -443,6 +445,8 @@ const useGameStore = create(
       availableActions: [],
       activeMonthlyOffers: [],
       dealParticipations: [],
+      actionsThisTurn: 0,
+      lastTradeAction: null,
       monthlyOfferUsed: false,
       joblessMonths: 0,
       salaryCutMonths: 0,
@@ -754,6 +758,8 @@ const useGameStore = create(
             investments: baseInvestments,
             monthlyOfferUsed: false,
             salaryProgression,
+            actionsThisTurn: 0,
+            lastTradeAction: null,
             lastTurn: {
               salary,
               passiveIncome,
@@ -829,6 +835,12 @@ const useGameStore = create(
             cash: state.cash - (spend + fee),
             creditBucket,
             recentLog,
+            actionsThisTurn: (state.actionsThisTurn || 0) + 1,
+            lastTradeAction: {
+              type: 'buy',
+              instrumentId,
+              turn: state.month,
+            },
           };
         }),
       sellInstrument: (instrumentId, desiredAmount) =>
@@ -838,6 +850,13 @@ const useGameStore = create(
           const holding = state.investments[instrumentId];
           const price = state.priceState[instrumentId]?.price;
           if (!instrument || !holding || !price || desiredAmount <= 0) {
+            return {};
+          }
+          const buyLock =
+            state.lastTradeAction?.type === 'buy' &&
+            state.lastTradeAction.instrumentId === instrumentId &&
+            state.lastTradeAction.turn === state.month;
+          if (buyLock) {
             return {};
           }
           const maxValue = holding.units * price;
@@ -881,6 +900,12 @@ const useGameStore = create(
             investments: nextInvestments,
             cash: state.cash + netProceeds,
             recentLog,
+            actionsThisTurn: (state.actionsThisTurn || 0) + 1,
+            lastTradeAction: {
+              type: 'sell',
+              instrumentId,
+              turn: state.month,
+            },
           };
         }),
       participateInDeal: (dealMeta) => {
@@ -982,6 +1007,7 @@ const useGameStore = create(
             if (options.fromMonthly) {
               updates.monthlyOfferUsed = true;
             }
+            updates.actionsThisTurn = (state.actionsThisTurn || 0) + 1;
           }
           if (!message) {
             return updates;
@@ -1045,6 +1071,8 @@ const useGameStore = create(
         dealParticipations: state.dealParticipations,
         dealWindows: state.dealWindows,
         salaryProgression: state.salaryProgression,
+        actionsThisTurn: state.actionsThisTurn,
+        lastTradeAction: state.lastTradeAction,
         joblessMonths: state.joblessMonths,
         salaryCutMonths: state.salaryCutMonths,
         salaryCutAmount: state.salaryCutAmount,
