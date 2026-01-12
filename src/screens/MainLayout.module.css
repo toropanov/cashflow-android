@@ -14,11 +14,13 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(145deg, rgba(251, 253, 255, 0.95), rgba(228, 236, 252, 0.92)),
-    url('../assets/chatPattern.svg');
-  background-size: cover, 280px;
-  background-repeat: no-repeat, repeat;
-  background-position: center;
+    url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='29' height='50.115' patternTransform='scale(1.6) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='none'/><path d='M14.499 11.82L4.36 5.968l.002-11.706 10.14-5.855L24.638-5.74l-.001 11.707zm0 50.06L4.36 56.029l.002-11.706 10.14-5.855 10.137 5.852-.001 11.707zm14.498-25.117L18.858 30.91l.002-11.707L29 13.349l10.137 5.853-.001 11.706zm-29 0l-10.139-5.852.002-11.707L0 13.349l10.138 5.853-.002 11.706zm14.501-19.905L0 8.488.002-8.257l14.5-8.374L29-8.26l-.002 16.745zm0 50.06L0 58.548l.002-16.745 14.5-8.373L29 41.8l-.002 16.744zM28.996 41.8l-14.498-8.37.002-16.744L29 8.312l14.498 8.37-.002 16.745zm-29 0l-14.498-8.37.002-16.744L0 8.312l14.498 8.37-.002 16.745z' stroke-linecap='square' stroke-width='0.8' stroke='%23cfd9ff55' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>"),
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.7), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(189, 219, 255, 0.6), transparent 50%),
+    radial-gradient(circle at 10% 80%, rgba(255, 214, 248, 0.45), transparent 55%),
+    linear-gradient(135deg, #fdfbff 0%, #e8f1ff 35%, #eef9ff 100%);
+  background-size: auto, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
   z-index: -1;
 }
 
@@ -26,7 +28,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.6rem 1rem;
+  padding: 0.45rem 0.8rem;
   position: fixed;
   top: 0;
   left: 50%;
@@ -40,17 +42,24 @@
   border-bottom: 1px solid rgba(18, 42, 86, 0.08);
 }
 
-.headerLeft {
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.headerTitle {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.6rem;
 }
 
 .avatar {
-  width: 46px;
-  height: 46px;
-  border-radius: 16px;
-  box-shadow: 0 10px 20px rgba(40, 66, 111, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(40, 66, 111, 0.18);
 }
 
 .professionLabel {
@@ -60,22 +69,17 @@
   color: rgba(46, 61, 92, 0.7);
 }
 
+
 .professionTitle {
   display: block;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   color: #0d1f36;
 }
 
-.headerRight {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  color: rgba(255, 255, 255, 0.85);
-}
-
 .headerStats {
-  display: flex;
-  gap: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
 }
 
 .headerStats span {
@@ -87,17 +91,17 @@
 }
 
 .headerStats strong {
-  font-size: 1rem;
-  color: rgba(96, 108, 132, 0.95);
+  font-size: 0.95rem;
+  color: rgba(47, 58, 88, 0.95);
 }
 
 .exitButton {
   border: none;
   background: rgba(31, 45, 78, 0.08);
   color: #1f2d4e;
-  border-radius: 14px;
-  width: 42px;
-  height: 42px;
+  border-radius: 12px;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
 }
 

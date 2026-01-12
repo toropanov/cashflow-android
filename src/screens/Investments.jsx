@@ -204,9 +204,6 @@ function Investments() {
 
   return (
     <div className={styles.screen}>
-      <header>
-        <h2>Активы</h2>
-      </header>
       <AssetsSectionSwitch active="investments" />
       {feedback && (
         <div

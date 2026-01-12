@@ -73,17 +73,14 @@ function MainLayout() {
     <div className={styles.layout}>
       <div className={styles.backdrop} />
       <header className={styles.headerBar}>
-        <div className={styles.headerLeft}>
-          <div
-            className={styles.avatar}
-            style={spriteStyle(getProfessionIcon(storeData.profession))}
-          />
-          <div>
-            <span className={styles.professionLabel}>Текущая профессия</span>
-            <strong className={styles.professionTitle}>{storeData.profession?.title || 'Профиль'}</strong>
+        <div className={styles.headerInfo}>
+          <div className={styles.headerTitle}>
+            <div className={styles.avatar} style={spriteStyle(getProfessionIcon(storeData.profession))} />
+            <div>
+              <span className={styles.professionLabel}>Текущая профессия</span>
+              <strong className={styles.professionTitle}>{storeData.profession?.title || 'Профиль'}</strong>
+            </div>
           </div>
-        </div>
-        <div className={styles.headerRight}>
           <div className={styles.headerStats}>
             <div>
               <span>Свободный кэш</span>
@@ -94,25 +91,25 @@ function MainLayout() {
               <strong>{formatMoney(storeData.debt)}</strong>
             </div>
           </div>
-          <button
-            type="button"
-            className={styles.exitButton}
-            onClick={() => navigate('/choose')}
-            title="Сменить роль"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M5 7H19L18 21H6L5 7Z"
-                stroke="#1f2d4a"
-                strokeWidth="1.8"
-                strokeLinejoin="round"
-              />
-              <path d="M9 7V4H15V7" stroke="#1f2d4a" strokeWidth="1.8" strokeLinecap="round" />
-              <path d="M10 11V18" stroke="#1f2d4a" strokeWidth="1.5" strokeLinecap="round" />
-              <path d="M14 11V18" stroke="#1f2d4a" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-          </button>
         </div>
+        <button
+          type="button"
+          className={styles.exitButton}
+          onClick={() => navigate('/choose')}
+          title="Сменить роль"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 7H19L18 21H6L5 7Z"
+              stroke="#1f2d4a"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+            />
+            <path d="M9 7V4H15V7" stroke="#1f2d4a" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M10 11V18" stroke="#1f2d4a" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M14 11V18" stroke="#1f2d4a" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
       </header>
       <StatusRibbon win={storeData.winCondition} lose={storeData.loseCondition} />
       <main className={styles.content}>

@@ -122,10 +122,6 @@ function Deals() {
 
   return (
     <div className={styles.screen}>
-      <header className={styles.header}>
-        <h2>Инвестиционные возможности · Месяц {month}</h2>
-        <p>У каждой сделки окно и ограниченный пул — решайся до закрытия окна.</p>
-      </header>
       <AssetsSectionSwitch active="deals" />
       {feedback && (
         <div className={`${styles.feedback} ${feedback.positive ? styles.feedbackPositive : styles.feedbackNegative}`}>
