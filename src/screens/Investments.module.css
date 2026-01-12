@@ -125,12 +125,6 @@
   flex: 1;
 }
 
-.sellLockHint {
-  margin-top: 0.4rem;
-  font-size: 0.8rem;
-  color: #b04a3a;
-}
-
 .tradeHint {
   font-size: 0.8rem;
   color: rgba(32, 48, 85, 0.65);

@@ -13,7 +13,6 @@
 .eventCard {
   background: rgba(255, 255, 255, 0.92);
   color: #182336;
-  border: 1px solid rgba(13, 44, 87, 0.1);
 }
 
 .eventPositive {
@@ -90,7 +89,6 @@
   align-items: center;
   gap: 0.3rem;
   border-radius: 999px;
-  border: 1px solid rgba(12, 28, 52, 0.15);
   padding: 0.2rem 0.7rem;
   font-size: 0.85rem;
   color: rgba(18, 30, 56, 0.85);
@@ -261,7 +259,6 @@
   margin-top: 0.6rem;
   padding: 0.5rem 0.7rem;
   border-radius: 16px;
-  border: 1px dashed rgba(207, 103, 124, 0.5);
   background: rgba(255, 239, 242, 0.7);
 }
 
@@ -352,7 +349,6 @@
 
 .activeOffers {
   background: rgba(244, 247, 255, 0.95);
-  border: 1px solid rgba(27, 51, 96, 0.1);
   border-radius: 20px;
   padding: 0.9rem 1rem;
   display: flex;
@@ -426,6 +422,12 @@
   font-size: 0.75rem;
   letter-spacing: 0.18em;
   color: rgba(29, 47, 88, 0.7);
+}
+
+.goalMeta {
+  font-size: 0.8rem;
+  color: rgba(40, 57, 92, 0.85);
+  margin-top: 0.2rem;
 }
 
 .goalList {
@@ -568,8 +570,7 @@
 }
 
 .monthlyActionCard .iconSprite {
-  box-shadow: none;
-  background: rgba(244, 247, 255, 0.85);
+  display: none;
 }
 
 .monthlyBadge {
@@ -583,7 +584,6 @@
   margin-bottom: 0.4rem;
 }
 .detailBlock {
-  border: 1px solid rgba(26, 45, 72, 0.12);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.9);
   margin: 0.35rem 0;

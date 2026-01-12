@@ -46,13 +46,6 @@
   justify-content: center;
 }
 
-.iconWrapper {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .action {
   flex: 1.6;
   border: none;

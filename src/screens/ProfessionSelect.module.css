@@ -29,6 +29,56 @@
   color: rgba(32, 48, 74, 0.75);
 }
 
+.options {
+  margin: 1.5rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.optionGroup h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(21, 38, 70, 0.7);
+}
+
+.optionList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.optionButton {
+  flex: 1 1 calc(50% - 0.6rem);
+  min-width: 200px;
+  border: 1px solid rgba(24, 44, 78, 0.15);
+  border-radius: 16px;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.85);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.optionButton strong {
+  display: block;
+  color: #142444;
+}
+
+.optionButton small {
+  display: block;
+  margin-top: 0.2rem;
+  color: rgba(22, 38, 72, 0.7);
+}
+
+.optionButtonActive {
+  border-color: rgba(84, 139, 255, 0.45);
+  box-shadow: 0 12px 25px rgba(84, 139, 255, 0.2);
+  background: rgba(236, 244, 255, 0.95);
+}
+
 .cards {
   display: flex;
   flex-direction: column;

@@ -13,6 +13,12 @@ import { ensureSeed, uniformFromSeed } from '../domain/rng';
 import { DEAL_WINDOW_RULES } from '../domain/deals';
 
 const RNG_STORAGE_KEY = 'capetica_rng_seed';
+const DEFAULT_DIFFICULTY = 'normal';
+const DIFFICULTY_PRESETS = {
+  easy: { eventChance: 0.65 },
+  normal: { eventChance: 0.55 },
+  hard: { eventChance: 0.45 },
+};
 const noopStorage = {
   getItem: () => null,
   setItem: () => {},
@@ -162,9 +168,12 @@ function rollRandomEvent(state, seed, events = []) {
     return { event: null, seed, patch: {}, message: null };
   }
   let cursorSeed = seed;
+  const difficultyKey = state.difficulty || DEFAULT_DIFFICULTY;
+  const eventThreshold =
+    DIFFICULTY_PRESETS[difficultyKey]?.eventChance ?? DIFFICULTY_PRESETS[DEFAULT_DIFFICULTY].eventChance;
   const rollChance = uniformFromSeed(cursorSeed);
   cursorSeed = rollChance.seed;
-  if (rollChance.value > 0.55) {
+  if (rollChance.value > eventThreshold) {
     return { event: null, seed: cursorSeed, patch: {}, message: null };
   }
   const pickRoll = uniformFromSeed(cursorSeed);
@@ -262,6 +271,9 @@ function buildProfessionState(baseState, profession) {
       }
     : null;
   const defaultActions = getHomeActions(baseState.configs).slice(0, DEFAULT_HOME_ACTION_COUNT);
+  const selectedGoalId =
+    baseState.selectedGoalId || baseState.configs?.rules?.win?.[0]?.id || null;
+  const difficulty = baseState.difficulty || DEFAULT_DIFFICULTY;
   return {
     profession,
     professionId: profession.id,
@@ -306,6 +318,8 @@ function buildProfessionState(baseState, profession) {
     salaryCutAmount: 0,
     dealWindows,
     salaryProgression,
+    selectedGoalId,
+    difficulty,
   };
 }
 
@@ -448,6 +462,8 @@ const useGameStore = create(
       actionsThisTurn: 0,
       lastTradeAction: null,
       monthlyOfferUsed: false,
+      selectedGoalId: null,
+      difficulty: DEFAULT_DIFFICULTY,
       joblessMonths: 0,
       salaryCutMonths: 0,
       salaryCutAmount: 0,
@@ -461,6 +477,8 @@ const useGameStore = create(
               ? state.priceState
               : seedPriceState(bundle?.instruments?.instruments, rngSeed);
           const defaultActions = getHomeActions(bundle).slice(0, DEFAULT_HOME_ACTION_COUNT);
+          const defaultGoal = state.selectedGoalId || bundle?.rules?.win?.[0]?.id || null;
+          const difficulty = state.difficulty || DEFAULT_DIFFICULTY;
           return {
             configs: bundle,
             configsReady: true,
@@ -469,9 +487,11 @@ const useGameStore = create(
             availableActions: state.availableActions?.length
               ? state.availableActions
               : defaultActions,
+            selectedGoalId: defaultGoal,
+            difficulty,
           };
         }),
-      selectProfession: (professionId) =>
+      selectProfession: (professionId, prefs = {}) =>
         set((state) => {
           if (!state.configsReady) return {};
           const profession = getProfessionById(
@@ -479,19 +499,29 @@ const useGameStore = create(
             professionId,
           );
           if (!profession) return {};
+          const goalList = state.configs?.rules?.win || [];
+          const nextGoalId = prefs.goalId || state.selectedGoalId || goalList[0]?.id || null;
+          const nextDifficulty = prefs.difficulty || state.difficulty || DEFAULT_DIFFICULTY;
           const homeActionList = getHomeActions(state.configs);
           const actionRoll = rollMonthlyActions(
             state.rngSeed || ensureStoredSeed(),
             homeActionList,
           );
-          const base = buildProfessionState(state, profession);
+          const base = buildProfessionState(
+            { ...state, selectedGoalId: nextGoalId, difficulty: nextDifficulty },
+            profession,
+          );
           return {
             ...base,
             availableActions: actionRoll.actions,
             rngSeed: actionRoll.seed,
+            selectedGoalId: nextGoalId,
+            difficulty: nextDifficulty,
+            actionsThisTurn: 0,
+            lastTradeAction: null,
           };
         }),
-      randomProfession: () =>
+      randomProfession: (prefs = {}) =>
         set((state) => {
           const list = state.configs?.professions?.professions || [];
           if (!list.length) return {};
@@ -503,10 +533,20 @@ const useGameStore = create(
           const profession = list[index];
           const homeActionList = getHomeActions(state.configs);
           const actionRoll = rollMonthlyActions(roll.seed, homeActionList);
+          const goalList = state.configs?.rules?.win || [];
+          const nextGoalId = prefs.goalId || state.selectedGoalId || goalList[0]?.id || null;
+          const nextDifficulty = prefs.difficulty || state.difficulty || DEFAULT_DIFFICULTY;
           return {
-            ...buildProfessionState(state, profession),
+            ...buildProfessionState(
+              { ...state, selectedGoalId: nextGoalId, difficulty: nextDifficulty },
+              profession,
+            ),
             availableActions: actionRoll.actions,
             rngSeed: actionRoll.seed,
+            selectedGoalId: nextGoalId,
+            difficulty: nextDifficulty,
+            actionsThisTurn: 0,
+            lastTradeAction: null,
           };
         }),
       advanceMonth: () =>
@@ -949,6 +989,7 @@ const useGameStore = create(
               slotsLeft: Math.max(0, (prev.dealWindows?.[dealMeta.id]?.slotsLeft ?? 1) - 1),
             },
           },
+          actionsThisTurn: (prev.actionsThisTurn || 0) + 1,
         }));
         return { ok: true };
       },
@@ -1033,6 +1074,10 @@ const useGameStore = create(
             rngSeed: roll.seed,
             configs: state.configs,
             configsReady: state.configsReady,
+            selectedGoalId: state.selectedGoalId,
+            difficulty: state.difficulty || DEFAULT_DIFFICULTY,
+            actionsThisTurn: 0,
+            lastTradeAction: null,
           };
         }),
     }),
@@ -1073,6 +1118,8 @@ const useGameStore = create(
         salaryProgression: state.salaryProgression,
         actionsThisTurn: state.actionsThisTurn,
         lastTradeAction: state.lastTradeAction,
+        selectedGoalId: state.selectedGoalId,
+        difficulty: state.difficulty,
         joblessMonths: state.joblessMonths,
         salaryCutMonths: state.salaryCutMonths,
         salaryCutAmount: state.salaryCutAmount,

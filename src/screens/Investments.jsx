@@ -138,21 +138,22 @@ function InstrumentCard({
         <SparkLine data={priceInfo?.history || []} />
       </div>
       <div className={styles.actions}>
-        {hasPosition && (
+        {hasPosition && panelMode !== 'sell' && (
           <Button
             variant="secondary"
             onClick={() => togglePanel('sell')}
             className={`${styles.sellButton} ${sellProfit >= 0 ? styles.sellPositive : styles.sellNegative}`}
             disabled={sellLocked}
           >
-            {sellLocked ? 'Продажа позже' : sellLabel}
+            {sellLabel}
           </Button>
         )}
-        <Button variant="primary" onClick={() => togglePanel('buy')} disabled={buyDisabled}>
-          Купить
-        </Button>
+        {panelMode !== 'buy' && (
+          <Button variant="primary" onClick={() => togglePanel('buy')} disabled={buyDisabled}>
+            Купить
+          </Button>
+        )}
       </div>
-      {sellLocked && <span className={styles.sellLockHint}>Продажа доступна со следующего хода</span>}
       {renderPanel()}
     </Card>
   );

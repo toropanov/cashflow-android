@@ -108,7 +108,7 @@ function describeActionConsequences(action) {
   return list;
 }
 
-function ActionCard({ action, onSelect, cash, compact = false, variant = 'default' }) {
+function ActionCard({ action, onSelect, cash, compact = false, variant = 'default', hideIcon = false }) {
   const isMonthly = variant === 'monthly';
   const disabled = action.cost ? cash < action.cost : false;
   const buttonLabel = action.buttonText
@@ -124,7 +124,7 @@ function ActionCard({ action, onSelect, cash, compact = false, variant = 'defaul
       flat={isMonthly}
     >
       {isMonthly && <span className={styles.monthlyBadge}>Месячное предложение</span>}
-      <div className={styles.iconSprite} style={spriteStyle(action.icon)} />
+      {!hideIcon && <div className={styles.iconSprite} style={spriteStyle(action.icon)} />}
       <h3>{action.title}</h3>
       <p>{action.description}</p>
       {consequences.length > 0 && (
@@ -421,6 +421,13 @@ function Home() {
     availableCredit,
   };
   const winRules = configs?.rules?.win || [];
+  const selectedGoalId = useGameStore((state) => state.selectedGoalId);
+  const difficulty = useGameStore((state) => state.difficulty || 'normal');
+  const difficultyLabels = {
+    easy: 'Лёгкий',
+    normal: 'Стандарт',
+    hard: 'Сложный',
+  };
   const goalMetrics = useMemo(
     () => ({
       passiveIncome: passiveIncomeEffective,
@@ -429,9 +436,19 @@ function Home() {
     }),
     [passiveIncomeEffective, recurringExpenses, netWorth],
   );
+  const filteredGoals = useMemo(
+    () => {
+      if (selectedGoalId) {
+        return winRules.filter((rule) => rule.id === selectedGoalId);
+      }
+      return winRules;
+    },
+    [winRules, selectedGoalId],
+  );
+
   const goalRows = useMemo(
     () =>
-      winRules.map((rule) => {
+      filteredGoals.map((rule) => {
         const descriptor = describeGoal(rule);
         const target = Math.max(1, rule.requiredStreakMonths || 1);
         const progress = Math.min(target, trackers?.win?.[rule.id] || 0);
@@ -443,7 +460,7 @@ function Home() {
           active: goalConditionMet(rule, goalMetrics),
         };
       }),
-    [winRules, trackers, goalMetrics],
+    [filteredGoals, trackers, goalMetrics],
   );
 
   return (
@@ -472,6 +489,9 @@ function Home() {
           <div className={styles.goalHeader}>
             <span>Цель партии</span>
             <p>Выбирай стратегию под режим и держи результат подряд.</p>
+            <div className={styles.goalMeta}>
+              <span>Сложность: {difficultyLabels[difficulty] || difficulty}</span>
+            </div>
           </div>
           <div className={styles.goalList}>
             {goalRows.map((goal) => (
@@ -548,6 +568,7 @@ function Home() {
             compact
             variant="monthly"
             onSelect={(id) => applyHomeAction(id, { fromMonthly: true })}
+            hideIcon
           />
         </div>
       )}
