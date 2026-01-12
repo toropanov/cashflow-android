@@ -156,7 +156,6 @@ function MainLayout() {
       net,
       logs,
       event: currentEvent ? { ...currentEvent } : null,
-      stopLoss: lastTurn.stopLossWarnings || [],
     });
     setSummaryReady(true);
     setPendingSummary(false);
@@ -247,8 +246,8 @@ function MainLayout() {
         open={turnSummaryOpen && Boolean(turnSummary)}
         onClose={handleCloseSummary}
         footer={
-          <Button variant="primary" onClick={handleCloseSummary}>
-            Продолжить
+          <Button variant="primary" onClick={handleCloseSummary} className={styles.nextMoveButton}>
+            Следующий ход
           </Button>
         }
       >
@@ -258,9 +257,6 @@ function MainLayout() {
               <img src={neutralImg} alt="Ход завершён" />
             </div>
             <div className={styles.turnSummary}>
-              <div className={styles.turnSummaryNotice}>
-                <span>Ход завершён</span>
-              </div>
               {turnSummary.event && (
                 <div className={styles.turnEvent}>
                   <strong>{turnSummary.event.title}</strong>

@@ -175,20 +175,10 @@
 
 .turnIllustration img {
   width: 170px;
-  height: 170px;
+  height: 133px;
   object-fit: contain;
 }
 
-.turnSummaryNotice {
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 12px;
-  padding: 0.4rem 0.8rem;
-  text-align: center;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  font-size: 0.85rem;
-  color: rgba(27, 39, 70, 0.9);
-}
 
 .turnEvent {
   background: rgba(255, 255, 255, 0.75);
@@ -298,6 +288,11 @@
 .turnLogWarning p {
   margin: 0;
   color: rgba(45, 32, 7, 0.9);
+}
+
+.nextMoveButton {
+  background: linear-gradient(206deg, #fff3cb, #e2d654, #e5a302) !important;
+  color: #2d1800 !important;
 }
 
 .summaryButton {

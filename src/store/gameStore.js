@@ -842,7 +842,6 @@ const useGameStore = create(
               debtInterest,
               returns: simResult.returns,
               stopLossWarnings,
-              marketWarnings,
             },
             recentLog,
           };
