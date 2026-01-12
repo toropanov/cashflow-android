@@ -8,6 +8,9 @@
   padding: 0.2rem 0.2rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
   min-height: var(--footer-height);
   background: #ffffff;
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
 }
 
 

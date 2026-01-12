@@ -35,7 +35,9 @@
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(18, 42, 86, 0.08);
   box-shadow: 0 8px 20px rgba(32, 50, 91, 0.08);
-  z-index: 2;
+  z-index: 3;
+  position: sticky;
+  top: 0;
 }
 
 .headerInfo {
@@ -106,13 +108,14 @@
 .content {
   flex: 1;
   padding: 0;
+  height: calc(100dvh - var(--header-height) - var(--footer-height));
   max-height: calc(100svh - var(--header-height) - var(--footer-height));
-  height: calc(100svh - var(--header-height) - var(--footer-height));
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  min-height: 0;
 }
 
 .ribbon {
