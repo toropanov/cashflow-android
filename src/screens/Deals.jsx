@@ -4,7 +4,6 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import AssetsSectionSwitch from '../components/AssetsSectionSwitch';
 import styles from './Deals.module.css';
-import { spriteStyle } from '../utils/iconSprite';
 import { DEAL_TEMPLATES } from '../domain/deals';
 
 function pluralizeTurns(value) {
@@ -52,7 +51,6 @@ function DealCard({ deal, windowMeta, onParticipate, disabled, active }) {
   return (
     <Card className={`${styles.dealCard} ${active ? styles.dealActive : ''}`}>
       <div className={styles.dealRow}>
-        <div className={styles.dealIcon} style={spriteStyle(deal.icon)} />
         <div>
           <h3>{deal.title}</h3>
           <p>{deal.description}</p>

@@ -18,10 +18,13 @@
 .dealCard {
   background: #ffffff;
   color: #1d2b46;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
   border: 1px solid rgba(27, 51, 96, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(15, 23, 46, 0.08);
 }
 
 .dealActive {
@@ -92,13 +95,6 @@
   border: 1px solid rgba(26, 45, 78, 0.15);
   font-size: 0.8rem;
   color: rgba(22, 37, 68, 0.85);
-}
-
-.dealIcon {
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
-  box-shadow: 0 10px 20px rgba(36, 56, 94, 0.2);
 }
 
 .risk {

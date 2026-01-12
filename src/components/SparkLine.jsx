@@ -21,6 +21,8 @@ function SparkLine({ data = [], colorStart = '#2f74ff', colorStop = '#53d7b4' })
   if (!data.length) return null;
   const width = 280;
   const height = 80;
+  const paddingX = 6;
+  const paddingY = 6;
   const values = data.map((point) => {
     if (typeof point === 'number') return point;
     if (typeof point.value === 'number') return point.value;
@@ -30,7 +32,7 @@ function SparkLine({ data = [], colorStart = '#2f74ff', colorStop = '#53d7b4' })
   const min = Math.min(...values);
   const max = Math.max(...values);
   const range = max - min || 1;
-  const paddingX = 6;
+  const plotHeight = Math.max(height - paddingY * 2, 1);
   const points = data.map((point, index) => {
     const value =
       typeof point === 'number'
@@ -42,12 +44,14 @@ function SparkLine({ data = [], colorStart = '#2f74ff', colorStop = '#53d7b4' })
             : 0;
     const x =
       paddingX + (index / Math.max(data.length - 1, 1)) * (width - paddingX * 2);
-    const y = height - ((value - min) / range) * height;
+    const normalized = (value - min) / range;
+    const y = paddingY + (1 - normalized) * plotHeight;
     return { x, y };
   });
   const pathD = buildSmoothPath(points);
   const lastPoint = points[points.length - 1];
-  const areaPath = `${pathD} L${lastPoint.x},${height} L${points[0].x},${height} Z`;
+  const baseY = height - paddingY;
+  const areaPath = `${pathD} L${lastPoint.x},${baseY} L${points[0].x},${baseY} Z`;
   const gradientId = useId();
   const fillId = useId();
   return (

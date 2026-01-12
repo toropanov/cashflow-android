@@ -46,7 +46,7 @@
 
 .instrumentHeader {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: 0.8rem;
   align-items: center;
 }
@@ -54,13 +54,6 @@
 .instrumentHeader p {
   margin: 0;
   color: rgba(8, 12, 30, 0.6);
-}
-
-.instrumentIcon {
-  width: 62px;
-  height: 62px;
-  border-radius: 22px;
-  box-shadow: 0 10px 25px rgba(8, 12, 32, 0.25);
 }
 
 .priceBlock {

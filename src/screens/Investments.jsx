@@ -6,7 +6,6 @@ import Slider from '../components/Slider';
 import SparkLine from '../components/SparkLine';
 import AssetsSectionSwitch from '../components/AssetsSectionSwitch';
 import styles from './Investments.module.css';
-import { spriteStyle, getTypeIcon } from '../utils/iconSprite';
 
 const LOT_STEP = 100;
 
@@ -25,7 +24,6 @@ function InstrumentCard({ instrument, priceInfo, holding, cash, onBuy, onSell })
   const price = Math.round(rawPrice);
   const holdingUnits = holding?.units || 0;
   const holdingValue = Math.round(holdingUnits * rawPrice);
-  const iconKey = getTypeIcon(instrument.type);
   const buyMax = Math.floor(Math.max(0, cash) / LOT_STEP) * LOT_STEP;
   const sellMax = Math.floor(Math.max(0, holdingValue) / LOT_STEP) * LOT_STEP;
   const [buyAmount, setBuyAmount] = useState(LOT_STEP);
@@ -99,7 +97,7 @@ function InstrumentCard({ instrument, priceInfo, holding, cash, onBuy, onSell })
             }}
             disabled={disabled}
           >
-            {isBuy ? `Купить ${lots} лотов` : `Продать ${lots} лотов`}
+            {isBuy ? 'Купить' : `Продать ${lots} лотов`}
           </Button>
           <Button variant="secondary" onClick={() => setPanelMode(null)}>
             Отмена
@@ -112,7 +110,6 @@ function InstrumentCard({ instrument, priceInfo, holding, cash, onBuy, onSell })
   return (
     <Card className={styles.instrumentCard}>
       <div className={styles.instrumentHeader}>
-        <div className={styles.instrumentIcon} style={spriteStyle(iconKey)} />
         <div>
           <h3>{instrument.title}</h3>
         </div>
