@@ -6,7 +6,7 @@
   font-weight: 600;
   color: #0a1630;
   cursor: pointer;
-  background: linear-gradient(120deg, #9fd4ff, #d7f4c7);
+  background: linear-gradient(206deg, #dfe9ff, #bdd7ff, #69c7f5);
   box-shadow:
     0 20px 40px rgba(87, 137, 177, 0.25),
     inset 0 1px rgba(255, 255, 255, 0.7);
@@ -50,6 +50,10 @@
   background: rgba(255, 255, 255, 0.45);
   margin-right: 0.6rem;
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.9);
+}
+
+.iconOnly {
+  margin-right: 0;
 }
 
 .gradientButton[data-rolling='true'] .icon {

@@ -10,6 +10,7 @@ import lawyerImg from '../assets/proffesions/low.png';
 import doctorImg from '../assets/proffesions/doctor.png';
 import fireImg from '../assets/proffesions/fire.png';
 import managerImg from '../assets/proffesions/manager.png';
+import introImg from '../assets/intro_ru.png';
 
 const DIFFICULTY_OPTIONS = [
   { id: 'easy', label: 'Лёгкий', description: 'Реже негативные события.' },
@@ -152,9 +153,15 @@ function ProfessionSelect() {
 
   return (
     <div className={styles.screen}>
+      <div
+        className={styles.heroPoster}
+        style={{ backgroundImage: `url(${introImg})` }}
+        role="img"
+        aria-label="Кем ты стартуешь в Capetica?"
+      />
       <div className={styles.hero}>
         <p>Выбери роль</p>
-        <h1>Кем ты стартуешь в Capetica?</h1>
+        <h1>С чего начнётся твоя история?</h1>
         <span>Каждая профессия — своя динамика кэша, расходов и кредитного лайна.</span>
       </div>
       {winRules.length > 0 && (
@@ -202,9 +209,16 @@ function ProfessionSelect() {
           <ProfCard key={profession.id} profession={profession} onSelect={handleSelect} />
         ))}
       </div>
-      <GradientButton onClick={handleRandom} disabled={isRolling} icon="🎲" rolling={isRolling}>
-        Случайно
-      </GradientButton>
+      <GradientButton
+        onClick={handleRandom}
+        disabled={isRolling}
+        icon="🎲"
+        rolling={isRolling}
+        size="compact"
+        ariaLabel="Случайно"
+        className={styles.randomDiceButton}
+        iconClassName={styles.randomDiceIcon}
+      />
       <div className={styles.sparkles}>
         <span />
         <span />

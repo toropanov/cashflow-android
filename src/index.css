@@ -39,7 +39,7 @@ body {
 }
 
 .appRoot {
-  width: min(500px, 100%);
+  width: min(400px, 100%);
   min-height: 100vh;
   min-height: 100svh;
   min-height: 100dvh;

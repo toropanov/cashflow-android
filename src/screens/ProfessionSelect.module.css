@@ -8,8 +8,20 @@
   color: #1f2c48;
 }
 
+.heroPoster {
+  width: calc(100% + 2.4rem);
+  margin: -2rem -1.2rem 1.5rem;
+  aspect-ratio: 1024 / 1200;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 .hero {
   max-width: 720px;
+  margin-top: -10.4rem;
+  position: relative;
+  z-index: 1;
 }
 
 .hero p {
@@ -54,7 +66,7 @@
   flex: 1 1 calc(50% - 0.6rem);
   min-width: 200px;
   border: 1px solid rgba(24, 44, 78, 0.15);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 0.8rem 1rem;
   background: rgba(255, 255, 255, 0.85);
   text-align: left;
@@ -85,9 +97,36 @@
   gap: 1rem;
 }
 
+.randomDiceButton {
+  align-self: center;
+  margin-top: 0.8rem;
+  padding: 0.42rem;
+  background: linear-gradient(120deg, #d5dbea, #c7cedd) !important;
+  box-shadow:
+    0 6px 14px rgba(14, 23, 48, 0.15),
+    inset 0 0.6px rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+}
+
+.randomDiceButton::after {
+  display: none;
+}
+
+.randomDiceIcon {
+  width: 54px;
+  height: 54px;
+  font-size: 1.3rem;
+  margin: 0;
+  background: linear-gradient(206deg, #dfe9ff, #bdd7ff, #69c7f5);
+  box-shadow:
+    0 6px 11px rgba(87, 137, 177, 0.25),
+    inset 0 0.6px rgba(255, 255, 255, 0.7);
+}
+
 .profCard {
   color: #070a17;
   background: rgba(255, 255, 255, 0.9);
+  border-radius: 0;
 }
 
 .profCard :global(.inner) {
