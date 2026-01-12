@@ -1,93 +1,86 @@
 import styles from './BottomNav.module.css';
 
 const NAV_ITEMS = [
-  { id: 'career', label: 'Карьера', path: '/app' },
-  { id: 'bank', label: 'Активы', path: '/app/bank' },
-  { id: 'deals', label: 'Сделки', path: '/app/deals' },
+  { id: 'analytics', label: 'Аналитика', path: '/app' },
+  { id: 'assets', label: 'Активы', path: '/app/bank' },
 ];
 
-function Icon({ id, active }) {
-  const stroke = active ? '#1c2f53' : '#9fb1d2';
+function NavIcon({ id }) {
   switch (id) {
-    case 'career':
+    case 'analytics':
       return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+          <rect x="3.5" y="6" width="7" height="18" rx="3.5" fill="#dfe9ff" />
+          <rect x="11.5" y="3.5" width="7" height="20" rx="3.5" fill="#bdd7ff" />
+          <rect x="19.5" y="9" width="7" height="14.5" rx="3.5" fill="#9cc6ff" />
           <path
-            d="M5 9V7C5 5.89543 5.89543 5 7 5H17C18.1046 5 19 5.89543 19 7V9"
-            stroke={stroke}
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <rect x="4" y="9" width="16" height="10" rx="2" stroke={stroke} strokeWidth="2" />
-          <path d="M9 13H15" stroke={stroke} strokeWidth="2" strokeLinecap="round" />
-          <path d="M9 17L10.5 15L12 17L13.5 15L15 17" stroke={stroke} strokeWidth="1.6" />
-        </svg>
-      );
-    case 'bank':
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="7" width="18" height="12" rx="3" stroke={stroke} strokeWidth="2" />
-          <path d="M7 12H13" stroke={stroke} strokeWidth="2" strokeLinecap="round" />
-          <circle cx="17" cy="12" r="1.8" fill={stroke} opacity="0.7" />
-        </svg>
-      );
-    case 'deals':
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M4 12L9.5 7.5L12 10L14.5 7.5L20 12"
-            stroke={stroke}
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M5.5 13.5V18H10V15.5"
-            stroke={stroke}
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M14 15.5V18H18.5V13.5"
-            stroke={stroke}
-            strokeWidth="2"
+            d="M5 12L11 8L15 12L22 5.5"
+            stroke="#284b80"
+            strokeWidth="1.8"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
         </svg>
       );
+    case 'assets':
     default:
       return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <rect x="4" y="6" width="6" height="6" rx="1.5" stroke={stroke} strokeWidth="2" />
-          <rect x="14" y="6" width="6" height="6" rx="1.5" stroke={stroke} strokeWidth="2" opacity="0.8" />
-          <rect x="4" y="14" width="6" height="6" rx="1.5" stroke={stroke} strokeWidth="2" opacity="0.8" />
-          <rect x="14" y="14" width="6" height="6" rx="1.5" stroke={stroke} strokeWidth="2" />
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+          <rect x="5" y="11" width="20" height="11" rx="3" fill="#eaf3ff" stroke="#284b80" strokeWidth="1.4" />
+          <path d="M9 17H16" stroke="#284b80" strokeWidth="1.6" strokeLinecap="round" />
+          <circle cx="20.5" cy="17" r="2" fill="#284b80" opacity="0.7" />
+          <path
+            d="M7 11L15 6L23 11"
+            stroke="#284b80"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.9"
+          />
         </svg>
       );
   }
 }
 
-function BottomNav({ current, onChange }) {
+function DiceIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <rect x="4" y="4" width="16" height="16" rx="5" fill="#fff4cf" stroke="#1b1b24" strokeWidth="1.8" />
+      <circle cx="9" cy="9" r="1.7" fill="#1b1b24" />
+      <circle cx="15" cy="15" r="1.7" fill="#1b1b24" />
+      <circle cx="15" cy="9" r="1.7" fill="#1b1b24" opacity="0.6" />
+      <circle cx="9" cy="15" r="1.7" fill="#1b1b24" opacity="0.6" />
+    </svg>
+  );
+}
+
+function BottomNav({ current, onChange, onAdvance }) {
+  const renderNavButton = (item) => (
+    <button
+      key={item.id}
+      type="button"
+      className={styles.item}
+      onClick={() => onChange(item.path)}
+      aria-current={current === item.path ? 'page' : undefined}
+    >
+      <span className={styles.icon}>
+        <NavIcon id={item.id} />
+      </span>
+      <span>{item.label}</span>
+    </button>
+  );
+
   return (
     <nav className={styles.nav}>
-      {NAV_ITEMS.map((item) => {
-        const active = current === item.path;
-        return (
-          <button
-            key={item.id}
-            type="button"
-            className={`${styles.item} ${active ? styles.active : ''}`}
-            onClick={() => onChange(item.path)}
-          >
-            <span className={styles.icon}>
-              <Icon id={item.id} active={active} />
-            </span>
-            <span>{item.label}</span>
-          </button>
-        );
-      })}
+      {renderNavButton(NAV_ITEMS[0])}
+      <button type="button" className={styles.action} onClick={onAdvance}>
+        <DiceIcon />
+        <div>
+          <span>Завершить ход</span>
+          <small>Доходы, расходы, события</small>
+        </div>
+      </button>
+      {renderNavButton(NAV_ITEMS[1])}
     </nav>
   );
 }

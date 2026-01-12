@@ -1,24 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import useGameStore from '../store/gameStore';
 import BottomNav from '../components/BottomNav';
-import GradientButton from '../components/GradientButton';
 import { calculateHoldingsValue, calculatePassiveIncome } from '../domain/finance';
 import styles from './MainLayout.module.css';
 import { spriteStyle, getProfessionIcon } from '../utils/iconSprite';
-
-function DiceIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <rect x="4" y="4" width="16" height="16" rx="4" stroke="#05050d" strokeWidth="2" />
-      <circle cx="9" cy="9" r="1.5" fill="#05050d" />
-      <circle cx="15" cy="15" r="1.5" fill="#05050d" />
-      <circle cx="15" cy="9" r="1.5" fill="#05050d" opacity="0.6" />
-      <circle cx="9" cy="15" r="1.5" fill="#05050d" opacity="0.6" />
-    </svg>
-  );
-}
 
 function StatusRibbon({ win, lose }) {
   if (!win && !lose) return null;
@@ -49,6 +36,14 @@ function MainLayout() {
     })),
   );
   const advanceMonth = useGameStore((state) => state.advanceMonth);
+  const [finishPromptOpen, setFinishPromptOpen] = useState(false);
+
+  const openFinishPrompt = () => setFinishPromptOpen(true);
+  const handleFinishCancel = () => setFinishPromptOpen(false);
+  const handleFinishConfirm = () => {
+    setFinishPromptOpen(false);
+    advanceMonth();
+  };
 
   const instrumentMap = useMemo(() => {
     const list = storeData.configs?.instruments?.instruments || [];
@@ -123,12 +118,41 @@ function MainLayout() {
       <main className={styles.content}>
         <Outlet />
       </main>
-      <div className={styles.nextButton}>
-        <GradientButton onClick={advanceMonth} icon={<DiceIcon />}>
-          Перейти к следующему месяцу
-        </GradientButton>
-      </div>
-      <BottomNav current={location.pathname} onChange={navigate} />
+      {finishPromptOpen && (
+        <div className={styles.finishOverlay}>
+          <div className={styles.finishCard}>
+            <h3>Завершить ход?</h3>
+            <p>После подтверждения мы применим все эффекты месяца:</p>
+            <ul>
+              <li>
+                <strong>Финансы.</strong>
+                <span>Начислим зарплату и пассивный доход, удержим расходы и проценты по долгам.</span>
+              </li>
+              <li>
+                <strong>Активы.</strong>
+                <span>Пересчитаем стоимости портфеля, кредитный лимит и прочие показатели.</span>
+              </li>
+              <li>
+                <strong>Сделки.</strong>
+                <span>Продвинутся активные сделки и предложения, могут закрыться окна.</span>
+              </li>
+              <li>
+                <strong>События.</strong>
+                <span>Может произойти случайное событие месяца со своими эффектами.</span>
+              </li>
+            </ul>
+            <div className={styles.finishActions}>
+              <button type="button" onClick={handleFinishCancel} className={styles.finishCancel}>
+                Остаться в месяце
+              </button>
+              <button type="button" onClick={handleFinishConfirm} className={styles.finishConfirm}>
+                Подтвердить ход
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <BottomNav current={location.pathname} onChange={navigate} onAdvance={openFinishPrompt} />
     </div>
   );
 }

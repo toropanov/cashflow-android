@@ -108,7 +108,8 @@ function describeActionConsequences(action) {
   return list;
 }
 
-function ActionCard({ action, onSelect, cash, compact = false }) {
+function ActionCard({ action, onSelect, cash, compact = false, variant = 'default' }) {
+  const isMonthly = variant === 'monthly';
   const disabled = action.cost ? cash < action.cost : false;
   const buttonLabel = action.buttonText
     ? action.buttonText
@@ -117,7 +118,12 @@ function ActionCard({ action, onSelect, cash, compact = false }) {
       : 'Активировать';
   const consequences = describeActionConsequences(action);
   return (
-    <Card className={`${styles.actionCard} ${compact ? styles.compactCard : ''}`}>
+    <Card
+      className={`${styles.actionCard} ${compact ? styles.compactCard : ''} ${isMonthly ? styles.monthlyActionCard : ''}`}
+      glow={!isMonthly}
+      flat={isMonthly}
+    >
+      {isMonthly && <span className={styles.monthlyBadge}>Месячное предложение</span>}
       <div className={styles.iconSprite} style={spriteStyle(action.icon)} />
       <h3>{action.title}</h3>
       <p>{action.description}</p>
@@ -344,8 +350,11 @@ function Home() {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     seed = getNextSeed(seed);
-    const desiredCount = shuffled.length === 1 ? 1 : seed / 4294967296 < 0.5 ? 1 : 2;
-    return shuffled.slice(0, Math.min(desiredCount, shuffled.length));
+    const showChance = seed / 4294967296;
+    if (showChance < 0.25) {
+      return [];
+    }
+    return shuffled.slice(0, 1);
   }, [availableActions, activeOfferIds, month, monthlyOfferUsed]);
   const visibleActiveOffers = (activeMonthlyOffers || []).filter((offer) => offer.expiresMonth > month);
   const dealIncomeVal = useMemo(
@@ -531,25 +540,16 @@ function Home() {
           </ul>
         </Card>
       )}
-      {monthlyOffers.length > 0 && (
-        <section>
-          <div className={styles.sectionHeader}>
-            <span>Месячное предложение</span>
-            <p>Появляются случайно, успей выбрать одно из доступных.</p>
-          </div>
-          <div className={styles.offerCarousel}>
-            {monthlyOffers.map((action) => (
-              <div key={action.id} className={styles.offerItem}>
-                <ActionCard
-                  action={action}
-                  cash={cash}
-                  compact
-                  onSelect={(id) => applyHomeAction(id, { fromMonthly: true })}
-                />
-              </div>
-            ))}
-          </div>
-        </section>
+      {monthlyOffers[0] && (
+        <div className={styles.monthlyOffer}>
+          <ActionCard
+            action={monthlyOffers[0]}
+            cash={cash}
+            compact
+            variant="monthly"
+            onSelect={(id) => applyHomeAction(id, { fromMonthly: true })}
+          />
+        </div>
       )}
       {visibleActiveOffers.length > 0 && (
         <div className={styles.activeOffers}>

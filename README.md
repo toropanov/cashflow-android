@@ -1,6 +1,6 @@
-# FinStrategy — offline glassmorphism sim
+# Capetica — offline glassmorphism sim
 
-FinStrategy — это пошаговая финансовая игра (React 18 + Vite + Zustand) c неоморфно-glassmorphism интерфейсом и нативными обёртками Capacitor для Android/iOS. Веб-ассеты лежат локально (без CDN), поэтому игра готова к оффлайн-режиму и поставляется вместе с входными конфигами из `/public/config`.
+Capetica — это пошаговая финансовая игра (React 18 + Vite + Zustand) c неоморфно-glassmorphism интерфейсом и нативными обёртками Capacitor для Android/iOS. Веб-ассеты лежат локально (без CDN), поэтому игра готова к оффлайн-режиму и поставляется вместе с входными конфигами из `/public/config`.
 
 ## Быстрый старт (web)
 

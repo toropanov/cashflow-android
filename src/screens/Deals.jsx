@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import useGameStore from '../store/gameStore';
 import Card from '../components/Card';
 import Button from '../components/Button';
+import AssetsSectionSwitch from '../components/AssetsSectionSwitch';
 import styles from './Deals.module.css';
 import { spriteStyle } from '../utils/iconSprite';
 import { DEAL_TEMPLATES } from '../domain/deals';
@@ -125,6 +126,7 @@ function Deals() {
         <h2>Инвестиционные возможности · Месяц {month}</h2>
         <p>У каждой сделки окно и ограниченный пул — решайся до закрытия окна.</p>
       </header>
+      <AssetsSectionSwitch active="deals" />
       {feedback && (
         <div className={`${styles.feedback} ${feedback.positive ? styles.feedbackPositive : styles.feedbackNegative}`}>
           {feedback.text}

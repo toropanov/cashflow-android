@@ -4,6 +4,7 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import Slider from '../components/Slider';
 import SparkLine from '../components/SparkLine';
+import AssetsSectionSwitch from '../components/AssetsSectionSwitch';
 import styles from './Investments.module.css';
 import { spriteStyle, getTypeIcon } from '../utils/iconSprite';
 
@@ -206,6 +207,7 @@ function Investments() {
       <header>
         <h2>Активы</h2>
       </header>
+      <AssetsSectionSwitch active="investments" />
       {feedback && (
         <div
           className={`${styles.feedback} ${
