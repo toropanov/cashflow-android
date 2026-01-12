@@ -1,0 +1,142 @@
+{
+  "events": [
+    {
+      "id": "dividend_boost",
+      "title": "Крипто-вознаграждение",
+      "description": "Платформа начислила стейкинг-бонус.",
+      "effect": { "cashDelta": 320 },
+      "type": "positive",
+      "chance": 0.35,
+      "icon": "iconCoins"
+    },
+    {
+      "id": "tax_review",
+      "title": "Налоговая проверка",
+      "description": "Нужно срочно оплатить консультацию.",
+      "effect": { "cashDelta": -480 },
+      "type": "negative",
+      "chance": 0.25,
+      "protectionKey": "legalShield",
+      "icon": "iconCard"
+    },
+    {
+      "id": "portfolio_award",
+      "title": "Премия за лид-магнит",
+      "description": "Выплата за лучшее решение месяца.",
+      "effect": { "cashDelta": 650, "salaryBonusDelta": 120 },
+      "type": "positive",
+      "chance": 0.2,
+      "icon": "iconGift"
+    },
+    {
+      "id": "hardware_failure",
+      "title": "Поломка оборудования",
+      "description": "Ремонт за твой счёт.",
+      "effect": { "cashDelta": -550 },
+      "type": "negative",
+      "chance": 0.3,
+      "protectionKey": "techShield",
+      "icon": "iconHardhat"
+    },
+    {
+      "id": "clinic_invoice",
+      "title": "Счёт из клиники",
+      "description": "Без страховки дорого лечиться.",
+      "effect": { "cashDelta": -620 },
+      "type": "negative",
+      "chance": 0.3,
+      "protectionKey": "healthPlan",
+      "icon": "iconStethoscope"
+    },
+    {
+      "id": "mentor_call",
+      "title": "Совет ментора",
+      "description": "Знания повышают доход.",
+      "effect": { "salaryBonusDelta": 180 },
+      "type": "positive",
+      "chance": 0.25,
+      "icon": "iconBulb"
+    },
+    {
+      "id": "utility_spike",
+      "title": "Коммунальный скачок",
+      "description": "Расходы выросли на месяц.",
+      "effect": { "cashDelta": -300 },
+      "type": "negative",
+      "chance": 0.2,
+      "icon": "iconCart"
+    },
+    {
+      "id": "low_utilities",
+      "title": "Скидки на энергорынке",
+      "description": "Постоянно снижаешь фиксированные расходы.",
+      "effect": { "recurringDelta": -60 },
+      "type": "positive",
+      "chance": 0.15,
+      "icon": "iconPlant"
+    },
+    {
+      "id": "job_loss",
+      "title": "Сокращение отдела",
+      "description": "Направление закрыли — остаёшься без зарплаты на несколько месяцев.",
+      "effect": { "joblessMonths": 3 },
+      "type": "negative",
+      "chance": 0.08,
+      "icon": "iconHardhat"
+    },
+    {
+      "id": "salary_cut",
+      "title": "Антикризисное снижение",
+      "description": "Компания урезает зарплату, пока рынок не стабилизируется.",
+      "effect": { "salaryCutMonths": 3, "salaryCutAmount": 400 },
+      "type": "negative",
+      "chance": 0.12,
+      "icon": "iconWallet"
+    },
+    {
+      "id": "rate_hike",
+      "title": "Рост ставки",
+      "description": "Обслуживание долга дорожает.",
+      "effect": { "recurringDelta": 110 },
+      "type": "negative",
+      "chance": 0.22,
+      "icon": "iconCalculator"
+    },
+    {
+      "id": "currency_devaluation",
+      "title": "Девальвация валюты",
+      "description": "Свободный кэш обесценился.",
+      "effect": { "cashDelta": -400 },
+      "type": "negative",
+      "chance": 0.18,
+      "icon": "iconWallet"
+    },
+    {
+      "id": "tenant_failure",
+      "title": "Сбой арендатора",
+      "description": "Один из арендаторов сорвал платёж.",
+      "effect": { "cashDelta": -350 },
+      "type": "negative",
+      "chance": 0.2,
+      "icon": "iconHardhat"
+    },
+    {
+      "id": "career_shift",
+      "title": "Смена профессии",
+      "description": "Получаешь оффер в смежной нише — повышает доход.",
+      "effect": { "salaryBonusDelta": 220 },
+      "type": "positive",
+      "chance": 0.12,
+      "icon": "iconBulb"
+    },
+    {
+      "id": "income_loss",
+      "title": "Потеря дохода",
+      "description": "Контракт закрыт, нужен запас прочности.",
+      "effect": { "joblessMonths": 2 },
+      "type": "negative",
+      "chance": 0.15,
+      "icon": "iconCard"
+    }
+  ]
+}

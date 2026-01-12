@@ -12,7 +12,7 @@ import {
 import { ensureSeed, uniformFromSeed } from '../domain/rng';
 import { DEAL_WINDOW_RULES } from '../domain/deals';
 
-const RNG_STORAGE_KEY = 'finstrategy_rng_seed';
+const RNG_STORAGE_KEY = 'capetica_rng_seed';
 const noopStorage = {
   getItem: () => null,
   setItem: () => {},
@@ -22,98 +22,11 @@ const hydratedStorage = createJSONStorage(() =>
   typeof window === 'undefined' ? noopStorage : window.localStorage,
 );
 
-const HOME_ACTIONS = [
-  {
-    id: 'side_hustle',
-    title: 'Франшиза кофе',
-    description: 'Оплата наставника → +$250 к зарплате со следующего месяца.',
-    cost: 250,
-    effect: 'salary_up',
-    value: 250,
-    icon: 'iconWallet',
-  },
-  {
-    id: 'debt_payment',
-    title: 'Погашение долга',
-    description: 'Закрыть до 30% долга — облегчает будущие проценты.',
-    effect: 'debt_down',
-    icon: 'iconCard',
-  },
-  {
-    id: 'skill_invest',
-    title: 'Интенсив навыков',
-    description: 'Платное обучение → +$400 к зарплате ежемесячно.',
-    cost: 600,
-    effect: 'salary_up',
-    value: 400,
-    icon: 'iconOwl',
-  },
-  {
-    id: 'optimize_expenses',
-    title: 'Анти-подписки',
-    description: 'За один вечер отменяешь лишнее — расходы падают на $120/мес.',
-    cost: 320,
-    effect: 'expense_down',
-    value: 120,
-    icon: 'iconCalculator',
-  },
-  {
-    id: 'health_plan',
-    title: 'Премиум страховка',
-    description: 'Платишь фиксированно и избегаешь медсчётов.',
-    cost: 350,
-    effect: 'protection',
-    protectionKey: 'healthPlan',
-    icon: 'iconStethoscope',
-  },
-  {
-    id: 'wellness',
-    title: 'Mind&Body выходные',
-    description: 'Минус стресс, траты становятся ниже на $80.',
-    cost: 180,
-    effect: 'cost_down',
-    value: 80,
-    icon: 'iconSmile',
-  },
-  {
-    id: 'legal_consult',
-    title: 'Финансовый юрист',
-    description: 'Разовый платёж → защита от проверок.',
-    cost: 280,
-    effect: 'protection',
-    protectionKey: 'legalShield',
-    icon: 'iconGrowth',
-  },
-  {
-    id: 'equipment_plan',
-    title: 'Сервис гаджетов',
-    description: 'Ежемесячное ТО техники — защищает от поломок.',
-    cost: 220,
-    effect: 'protection',
-    protectionKey: 'techShield',
-    icon: 'iconHardhat',
-  },
-  {
-    id: 'credit_draw',
-    title: 'Забрать кредит',
-    description: 'Используешь часть лимита и пополняешь кэш.',
-    effect: 'take_credit',
-    value: 1500,
-    buttonText: 'Получить $1500',
-    icon: 'iconPiggy',
-  },
-  {
-    id: 'event_pitch',
-    title: 'Венчурное мероприятие',
-    description: 'Покупаешь билет: шанс сорвать $2200, либо потерять вложение.',
-    cost: 500,
-    type: 'chance',
-    chanceSuccess: 0.4,
-    success: { cashDelta: 2200 },
-    fail: { cashDelta: -600 },
-    icon: 'iconGift',
-  },
-];
+const DEFAULT_HOME_ACTION_COUNT = 4;
+
+const getHomeActions = (configs) => configs?.homeActions?.actions || [];
+
+const getRandomEvents = (configs) => configs?.randomEvents?.events || [];
 
 function pickDealDuration(rule, rollValue = 0.5) {
   if (!rule) return 3;
@@ -169,148 +82,6 @@ function advanceDealWindows(current = {}, seed) {
   return { state, seed: cursor };
 }
 
-const RANDOM_EVENTS = [
-  {
-    id: 'dividend_boost',
-    title: 'Крипто-вознаграждение',
-    description: 'Платформа начислила стейкинг-бонус.',
-    effect: { cashDelta: 320 },
-    type: 'positive',
-    chance: 0.35,
-    icon: 'iconCoins',
-  },
-  {
-    id: 'tax_review',
-    title: 'Налоговая проверка',
-    description: 'Нужно срочно оплатить консультацию.',
-    effect: { cashDelta: -480 },
-    type: 'negative',
-    chance: 0.25,
-    protectionKey: 'legalShield',
-    icon: 'iconCard',
-  },
-  {
-    id: 'portfolio_award',
-    title: 'Премия за лид-магнит',
-    description: 'Выплата за лучшее решение месяца.',
-    effect: { cashDelta: 650, salaryBonusDelta: 120 },
-    type: 'positive',
-    chance: 0.2,
-    icon: 'iconGift',
-  },
-  {
-    id: 'hardware_failure',
-    title: 'Поломка оборудования',
-    description: 'Ремонт за твой счёт.',
-    effect: { cashDelta: -550 },
-    type: 'negative',
-    chance: 0.3,
-    protectionKey: 'techShield',
-    icon: 'iconHardhat',
-  },
-  {
-    id: 'clinic_invoice',
-    title: 'Счёт из клиники',
-    description: 'Без страховки дорого лечиться.',
-    effect: { cashDelta: -620 },
-    type: 'negative',
-    chance: 0.3,
-    protectionKey: 'healthPlan',
-    icon: 'iconStethoscope',
-  },
-  {
-    id: 'mentor_call',
-    title: 'Совет ментора',
-    description: 'Знания повышают доход.',
-    effect: { salaryBonusDelta: 180 },
-    type: 'positive',
-    chance: 0.25,
-    icon: 'iconBulb',
-  },
-  {
-    id: 'utility_spike',
-    title: 'Коммунальный скачок',
-    description: 'Расходы выросли на месяц.',
-    effect: { cashDelta: -300 },
-    type: 'negative',
-    chance: 0.2,
-    icon: 'iconCart',
-  },
-  {
-    id: 'low_utilities',
-    title: 'Скидки на энергорынке',
-    description: 'Постоянно снижаешь фиксированные расходы.',
-    effect: { recurringDelta: -60 },
-    type: 'positive',
-    chance: 0.15,
-    icon: 'iconPlant',
-  },
-  {
-    id: 'job_loss',
-    title: 'Сокращение отдела',
-    description: 'Направление закрыли — остаёшься без зарплаты на несколько месяцев.',
-    effect: { joblessMonths: 3 },
-    type: 'negative',
-    chance: 0.08,
-    icon: 'iconHardhat',
-  },
-  {
-    id: 'salary_cut',
-    title: 'Антикризисное снижение',
-    description: 'Компания урезает зарплату, пока рынок не стабилизируется.',
-    effect: { salaryCutMonths: 3, salaryCutAmount: 400 },
-    type: 'negative',
-    chance: 0.12,
-    icon: 'iconWallet',
-  },
-  {
-    id: 'rate_hike',
-    title: 'Рост ставки',
-    description: 'Обслуживание долга дорожает.',
-    effect: { recurringDelta: 110 },
-    type: 'negative',
-    chance: 0.22,
-    icon: 'iconCalculator',
-  },
-  {
-    id: 'currency_devaluation',
-    title: 'Девальвация валюты',
-    description: 'Свободный кэш обесценился.',
-    effect: { cashDelta: -400 },
-    type: 'negative',
-    chance: 0.18,
-    icon: 'iconWallet',
-  },
-  {
-    id: 'tenant_failure',
-    title: 'Сбой арендатора',
-    description: 'Один из арендаторов сорвал платёж.',
-    effect: { cashDelta: -350 },
-    type: 'negative',
-    chance: 0.2,
-    icon: 'iconHardhat',
-  },
-  {
-    id: 'career_shift',
-    title: 'Смена профессии',
-    description: 'Получаешь оффер в смежной нише — повышает доход.',
-    effect: { salaryBonusDelta: 220 },
-    type: 'positive',
-    chance: 0.12,
-    icon: 'iconBulb',
-  },
-  {
-    id: 'income_loss',
-    title: 'Потеря дохода',
-    description: 'Контракт закрыт, нужен запас прочности.',
-    effect: { joblessMonths: 2 },
-    type: 'negative',
-    chance: 0.15,
-    icon: 'iconCard',
-  },
-];
-
-
 const roundMoney = (value) => Math.round(value ?? 0);
 
 function describeEffect(effect = {}) {
@@ -342,18 +113,22 @@ function describeEffect(effect = {}) {
   return parts.length ? parts.join(', ') : null;
 }
 
-function rollMonthlyActions(seed, count = 4) {
-  const pool = HOME_ACTIONS.map((item) => item.id);
+function rollMonthlyActions(seed, actions = [], count = DEFAULT_HOME_ACTION_COUNT) {
   let cursor = seed ?? ensureSeed();
+  const pool = actions.map((item) => item.id);
+  const limit = Math.min(count, pool.length);
+  if (!limit) {
+    return { actions: [], seed: cursor };
+  }
   const picked = new Set();
-  while (picked.size < Math.min(count, pool.length)) {
+  while (picked.size < limit) {
     const roll = uniformFromSeed(cursor);
     cursor = roll.seed;
     const index = Math.min(pool.length - 1, Math.floor(roll.value * pool.length));
     picked.add(pool[index]);
   }
-  const actions = HOME_ACTIONS.filter((item) => picked.has(item.id));
-  return { actions, seed: cursor };
+  const selected = actions.filter((item) => picked.has(item.id));
+  return { actions: selected, seed: cursor };
 }
 
 function applyOutcomeToState(state, outcome = {}) {
@@ -382,8 +157,8 @@ function applyOutcomeToState(state, outcome = {}) {
   return patch;
 }
 
-function rollRandomEvent(state, seed) {
-  if (!RANDOM_EVENTS.length) {
+function rollRandomEvent(state, seed, events = []) {
+  if (!events.length) {
     return { event: null, seed, patch: {}, message: null };
   }
   let cursorSeed = seed;
@@ -394,11 +169,8 @@ function rollRandomEvent(state, seed) {
   }
   const pickRoll = uniformFromSeed(cursorSeed);
   cursorSeed = pickRoll.seed;
-  const index = Math.min(
-    RANDOM_EVENTS.length - 1,
-    Math.floor(pickRoll.value * RANDOM_EVENTS.length),
-  );
-  const event = RANDOM_EVENTS[index];
+  const index = Math.min(events.length - 1, Math.floor(pickRoll.value * events.length));
+  const event = events[index];
   const confirm = uniformFromSeed(cursorSeed);
   cursorSeed = confirm.seed;
   if (confirm.value > (event.chance ?? 0.5)) {
@@ -489,6 +261,7 @@ function buildProfessionState(baseState, profession) {
         currentBase: profession.salaryMonthly || 0,
       }
     : null;
+  const defaultActions = getHomeActions(baseState.configs).slice(0, DEFAULT_HOME_ACTION_COUNT);
   return {
     profession,
     professionId: profession.id,
@@ -522,7 +295,7 @@ function buildProfessionState(baseState, profession) {
     lastTurn: null,
     recentLog: [],
     currentEvent: null,
-    availableActions: HOME_ACTIONS.slice(0, 4),
+    availableActions: defaultActions,
     activeMonthlyOffers: [],
     dealParticipations: [],
     monthlyOfferUsed: false,
@@ -539,8 +312,8 @@ function clampHistory(arr = [], cap = 120) {
   return arr.slice(arr.length - cap);
 }
 
-function handleHomeAction(actionId, state, seed) {
-  const action = HOME_ACTIONS.find((item) => item.id === actionId);
+function handleHomeAction(actionId, state, seed, actions = []) {
+  const action = actions.find((item) => item.id === actionId);
   if (!action) return { patch: {}, message: '' };
   if (action.id === 'debt_payment') {
     if (state.debt <= 0 || state.cash <= 100) {
@@ -667,7 +440,7 @@ const useGameStore = create(
       lastTurn: null,
       recentLog: [],
       currentEvent: null,
-      availableActions: HOME_ACTIONS.slice(0, 4),
+      availableActions: [],
       activeMonthlyOffers: [],
       dealParticipations: [],
       monthlyOfferUsed: false,
@@ -683,6 +456,7 @@ const useGameStore = create(
             Object.keys(state.priceState || {}).length > 0
               ? state.priceState
               : seedPriceState(bundle?.instruments?.instruments, rngSeed);
+          const defaultActions = getHomeActions(bundle).slice(0, DEFAULT_HOME_ACTION_COUNT);
           return {
             configs: bundle,
             configsReady: true,
@@ -690,7 +464,7 @@ const useGameStore = create(
             priceState,
             availableActions: state.availableActions?.length
               ? state.availableActions
-              : HOME_ACTIONS.slice(0, 4),
+              : defaultActions,
           };
         }),
       selectProfession: (professionId) =>
@@ -701,7 +475,11 @@ const useGameStore = create(
             professionId,
           );
           if (!profession) return {};
-          const actionRoll = rollMonthlyActions(state.rngSeed || ensureStoredSeed());
+          const homeActionList = getHomeActions(state.configs);
+          const actionRoll = rollMonthlyActions(
+            state.rngSeed || ensureStoredSeed(),
+            homeActionList,
+          );
           const base = buildProfessionState(state, profession);
           return {
             ...base,
@@ -719,7 +497,8 @@ const useGameStore = create(
             Math.floor(roll.value * list.length),
           );
           const profession = list[index];
-          const actionRoll = rollMonthlyActions(roll.seed);
+          const homeActionList = getHomeActions(state.configs);
+          const actionRoll = rollMonthlyActions(roll.seed, homeActionList);
           return {
             ...buildProfessionState(state, profession),
             availableActions: actionRoll.actions,
@@ -876,8 +655,10 @@ const useGameStore = create(
               completed,
             };
           });
-          const eventRoll = rollRandomEvent({ ...state, cash, debt }, rngSeed);
-          const actionsRoll = rollMonthlyActions(eventRoll.seed);
+          const homeActionList = getHomeActions(state.configs);
+          const eventPool = getRandomEvents(state.configs);
+          const eventRoll = rollRandomEvent({ ...state, cash, debt }, rngSeed, eventPool);
+          const actionsRoll = rollMonthlyActions(eventRoll.seed, homeActionList);
           const dealWindowRoll = advanceDealWindows(state.dealWindows, actionsRoll.seed);
           const patchedCash = eventRoll.patch.cash ?? cash;
           const patchedDebt = eventRoll.patch.debt ?? debt;
@@ -1171,7 +952,13 @@ const useGameStore = create(
       applyHomeAction: (actionId, options = {}) =>
         set((state) => {
           const currentSeed = state.rngSeed || ensureStoredSeed();
-          const { patch, message, nextSeed } = handleHomeAction(actionId, state, currentSeed);
+          const homeActionList = getHomeActions(state.configs);
+          const { patch, message, nextSeed } = handleHomeAction(
+            actionId,
+            state,
+            currentSeed,
+            homeActionList,
+          );
           const updates = {
             ...patch,
             rngSeed: nextSeed ?? currentSeed,
@@ -1180,7 +967,7 @@ const useGameStore = create(
           if (success) {
             const actionMeta =
               (state.availableActions || []).find((action) => action.id === actionId) ||
-              HOME_ACTIONS.find((action) => action.id === actionId);
+              homeActionList.find((action) => action.id === actionId);
             if (actionMeta) {
               const remaining = (state.activeMonthlyOffers || []).filter((offer) => offer.id !== actionMeta.id);
               updates.activeMonthlyOffers = [
@@ -1211,7 +998,8 @@ const useGameStore = create(
         set((state) => {
           if (!state.profession) return {};
           const base = buildProfessionState(state, state.profession);
-          const roll = rollMonthlyActions(state.rngSeed || ensureStoredSeed());
+          const homeActionList = getHomeActions(state.configs);
+          const roll = rollMonthlyActions(state.rngSeed || ensureStoredSeed(), homeActionList);
           return {
             ...state,
             ...base,
@@ -1223,7 +1011,7 @@ const useGameStore = create(
         }),
     }),
     {
-      name: 'finstrategy-store',
+      name: 'capetica-store',
       storage: hydratedStorage,
       partialize: (state) => ({
         configs: state.configs,
@@ -1267,6 +1055,5 @@ const useGameStore = create(
   ),
 );
 
-export const homeActions = HOME_ACTIONS;
 
 export default useGameStore;

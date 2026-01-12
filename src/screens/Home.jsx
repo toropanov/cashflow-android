@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import useGameStore, { homeActions } from '../store/gameStore';
+import useGameStore from '../store/gameStore';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import { calculateHoldingsValue, calculatePassiveIncome } from '../domain/finance';
@@ -297,7 +297,7 @@ function Home() {
   const lastTurn = useGameStore((state) => state.lastTurn);
   const cash = useGameStore((state) => state.cash);
   const currentEvent = useGameStore((state) => state.currentEvent);
-  const availableActions = useGameStore((state) => state.availableActions || homeActions);
+  const availableActions = useGameStore((state) => state.availableActions || []);
   const debt = useGameStore((state) => state.debt);
   const priceState = useGameStore((state) => state.priceState);
   const investments = useGameStore((state) => state.investments);

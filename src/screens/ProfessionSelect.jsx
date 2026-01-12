@@ -58,7 +58,7 @@ function ProfessionSelect() {
     <div className={styles.screen}>
       <div className={styles.hero}>
         <p>Выбери роль</p>
-        <h1>Кем ты стартуешь в FinStrategy?</h1>
+        <h1>Кем ты стартуешь в Capetica?</h1>
         <span>Каждая профессия — своя динамика кэша, расходов и кредитного лайна.</span>
       </div>
       <div className={styles.cards}>

@@ -1,4 +1,4 @@
-package com.example.finstrategy;
+package com.example.capetica;
 
 import com.getcapacitor.BridgeActivity;
 

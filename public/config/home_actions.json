@@ -1,0 +1,94 @@
+{
+  "actions": [
+    {
+      "id": "side_hustle",
+      "title": "Франшиза кофе",
+      "description": "Оплата наставника → +$250 к зарплате со следующего месяца.",
+      "cost": 250,
+      "effect": "salary_up",
+      "value": 250,
+      "icon": "iconWallet"
+    },
+    {
+      "id": "debt_payment",
+      "title": "Погашение долга",
+      "description": "Закрыть до 30% долга — облегчает будущие проценты.",
+      "effect": "debt_down",
+      "icon": "iconCard"
+    },
+    {
+      "id": "skill_invest",
+      "title": "Интенсив навыков",
+      "description": "Платное обучение → +$400 к зарплате ежемесячно.",
+      "cost": 600,
+      "effect": "salary_up",
+      "value": 400,
+      "icon": "iconOwl"
+    },
+    {
+      "id": "optimize_expenses",
+      "title": "Анти-подписки",
+      "description": "За один вечер отменяешь лишнее — расходы падают на $120/мес.",
+      "cost": 320,
+      "effect": "expense_down",
+      "value": 120,
+      "icon": "iconCalculator"
+    },
+    {
+      "id": "health_plan",
+      "title": "Премиум страховка",
+      "description": "Платишь фиксированно и избегаешь медсчётов.",
+      "cost": 350,
+      "effect": "protection",
+      "protectionKey": "healthPlan",
+      "icon": "iconStethoscope"
+    },
+    {
+      "id": "wellness",
+      "title": "Mind&Body выходные",
+      "description": "Минус стресс, траты становятся ниже на $80.",
+      "cost": 180,
+      "effect": "cost_down",
+      "value": 80,
+      "icon": "iconSmile"
+    },
+    {
+      "id": "legal_consult",
+      "title": "Финансовый юрист",
+      "description": "Разовый платёж → защита от проверок.",
+      "cost": 280,
+      "effect": "protection",
+      "protectionKey": "legalShield",
+      "icon": "iconGrowth"
+    },
+    {
+      "id": "equipment_plan",
+      "title": "Сервис гаджетов",
+      "description": "Ежемесячное ТО техники — защищает от поломок.",
+      "cost": 220,
+      "effect": "protection",
+      "protectionKey": "techShield",
+      "icon": "iconHardhat"
+    },
+    {
+      "id": "credit_draw",
+      "title": "Забрать кредит",
+      "description": "Используешь часть лимита и пополняешь кэш.",
+      "effect": "take_credit",
+      "value": 1500,
+      "buttonText": "Получить $1500",
+      "icon": "iconPiggy"
+    },
+    {
+      "id": "event_pitch",
+      "title": "Венчурное мероприятие",
+      "description": "Покупаешь билет: шанс сорвать $2200, либо потерять вложение.",
+      "cost": 500,
+      "type": "chance",
+      "chanceSuccess": 0.4,
+      "success": { "cashDelta": 2200 },
+      "fail": { "cashDelta": -600 },
+      "icon": "iconGift"
+    }
+  ]
+}

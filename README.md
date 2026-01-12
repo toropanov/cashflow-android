@@ -9,7 +9,7 @@ Capetica — это пошаговая финансовая игра (React 18 +
 3. `npm run build` — production-сборка в `dist/`
 4. `npm run preview` — быстрый smoke-тест собранной версии
 
-Состояние хранится в `localStorage` (ключ `finstrategy-store`) и восстанавливается между сессиями автоматически.
+Состояние хранится в `localStorage` (ключ `capetica-store`) и восстанавливается между сессиями автоматически.
 
 ## Capacitor / нативные обёртки
 
@@ -37,7 +37,7 @@ public/config/
 
 ## Как работает симуляция
 
-* **Детерминированный RNG.** Используется `mulberry32` с seed из `localStorage` (`finstrategy_rng_seed`). Seed сохраняется и передаётся в симулятор рынков и действия игрока (`src/store/gameStore.js`).
+* **Детерминированный RNG.** Используется `mulberry32` с seed из `localStorage` (`capetica_rng_seed`). Seed сохраняется и передаётся в симулятор рынков и действия игрока (`src/store/gameStore.js`).
 * **Коррелированные рынки.** `markets.json` задаёт корреляционную матрицу; внутри `simulateMarkets` строится разложение Холецкого и генерируются коррелированные приращения лог-доходностей.
 * **Циклы и шоки.** Для акций/крипты применяются синусоиды (`cycles`) и Compound Poisson-шоки (`shockModel`). Каждый шок ведёт учёт cooldown и добавляет отклонение в лог-доходность.
 * **Game Rules.** Стоимость жизни считается по профессии (`game_rules.livingCost`), кредитный лимит — по формуле из `game_rules.loans.creditLimit`. Победы/поражения считаются streak-ами (`evaluateGoals`).

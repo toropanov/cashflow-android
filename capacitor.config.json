@@ -1,6 +1,6 @@
 {
-  "appId": "com.example.finstrategy",
-  "appName": "FinStrategy",
+  "appId": "com.example.capetica",
+  "appName": "Capetica",
   "webDir": "dist",
   "bundledWebRuntime": false,
   "server": {

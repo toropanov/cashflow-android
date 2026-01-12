@@ -13,6 +13,8 @@ const CONFIG_FILES = [
   { key: 'markets', path: '/config/markets.json' },
   { key: 'instruments', path: '/config/instruments.json' },
   { key: 'rules', path: '/config/game_rules.json' },
+  { key: 'homeActions', path: '/config/home_actions.json' },
+  { key: 'randomEvents', path: '/config/random_events.json' },
 ];
 
 function GuardedLayout() {
