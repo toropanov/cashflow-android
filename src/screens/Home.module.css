@@ -2,8 +2,10 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding-bottom: 6rem;
+  padding-bottom: calc(6rem + var(--safe-area-bottom, 0) + 1rem);
   margin-top: 1rem;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
 }
 
 .screen h2 {
