@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useGameStore from '../store/gameStore';
 import Card from '../components/Card';
@@ -41,24 +41,34 @@ function CharacterSelect() {
 
   const handleSelect = (professionId) => {
     selectProfession(professionId, { goalId: selectedGoalId, difficulty });
-    navigate('/app');
+    navigate('/');
   };
 
   const handleRandom = () => {
     if (rolling) return;
     setRolling(true);
     randomProfession();
-    navigate('/app');
+    navigate('/');
     setTimeout(() => {
       setRolling(false);
     }, 750);
   };
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const handlePop = () => {
+      if (window.location.pathname === '/character') {
+        navigate('/');
+      }
+    };
+    window.addEventListener('popstate', handlePop);
+    return () => window.removeEventListener('popstate', handlePop);
+  }, [navigate]);
+
   return (
     <div className={styles.selectionPage}>
       <div className={styles.selectionHeader}>
         <div className={styles.selectionHero}>
-          <p className={styles.heroTag}>Настройки партии</p>
           <h1>
             С чего начнётся
             <br />
@@ -66,6 +76,12 @@ function CharacterSelect() {
           </h1>
           <span>Каждая профессия — своя динамика кэша, расходов и кредитного лайна.</span>
         </div>
+        <button type="button" className={styles.selectionBack} onClick={() => navigate('/')}>
+          <span aria-hidden="true" className={styles.backIcon}>
+            ←
+          </span>
+          Назад
+        </button>
       </div>
       <Card className={styles.panelCard}>
         <div className={styles.sectionHeader}>

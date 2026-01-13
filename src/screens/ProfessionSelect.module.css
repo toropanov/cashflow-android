@@ -32,7 +32,7 @@
 .heroTag {
   margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.14em;
   font-size: 0.8rem;
   color: rgba(32, 48, 74, 0.7);
 }
@@ -82,15 +82,16 @@
   transform: translateY(1px);
 }
 
-.heroPrimary {
-  background: linear-gradient(120deg, #7f9dff, #5ba4ff);
-  color: #fff;
-  box-shadow: 0 15px 30px rgba(48, 99, 235, 0.3);
-}
-
 .heroSecondary {
   background: #ffffff;
   border: 1px solid rgba(18, 36, 66, 0.15);
+}
+
+.heroContinue {
+  background: linear-gradient(120deg, #ffe498, #ffc877);
+  color: #06060c;
+  box-shadow: 0 15px 30px #eacf9b4d;
+  border: 1px solid #12244226;
 }
 
 .heroDice {
@@ -164,6 +165,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  margin-top: 0.6rem;
+  margin-left: auto;
 }
 
 .backIcon {

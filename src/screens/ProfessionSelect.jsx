@@ -19,6 +19,7 @@ function ProfessionSelect() {
   const [rolling, setRolling] = useState(false);
 
   const availableButtons = HERO_BUTTONS.filter((button) => !button.requiresActive || Boolean(professionId));
+  const hasContinue = availableButtons.some((button) => button.key === 'continue');
 
   const handleAction = (action) => {
     switch (action) {
@@ -56,7 +57,7 @@ function ProfessionSelect() {
         aria-label="Кем ты стартуешь в Capetica?"
       />
       <div className={styles.hero}>
-        <p className={styles.heroTag}>Стартуем</p>
+        <p className={styles.heroTag}>Инвестор</p>
         <h1>
           С чего начнётся
           <br />
@@ -65,18 +66,21 @@ function ProfessionSelect() {
         <span>Каждая профессия — своя динамика кэша, расходов и кредитного лайна.</span>
       </div>
       <div className={styles.heroActions}>
-        {availableButtons.map((button) => (
-          <button
-            key={button.key}
-            type="button"
-            className={`${styles.heroButton} ${
-              button.variant === 'primary' ? styles.heroPrimary : styles.heroSecondary
-            }`}
-            onClick={() => handleAction(button.action)}
-          >
-            {button.label}
-          </button>
-        ))}
+        {availableButtons.map((button) => {
+          const isContinue = button.key === 'continue';
+          const shouldAccent = isContinue || (!hasContinue && button.key === 'newGame');
+          const variantClass = shouldAccent ? styles.heroContinue : styles.heroSecondary;
+          return (
+            <button
+              key={button.key}
+              type="button"
+              className={`${styles.heroButton} ${variantClass}`}
+              onClick={() => handleAction(button.action)}
+            >
+              {button.label}
+            </button>
+          );
+        })}
       </div>
       <div className={styles.heroDice}>
         <GradientButton icon="🎲" rolling={rolling} onClick={handleRandom} size="compact" ariaLabel="Случайный выбор">
