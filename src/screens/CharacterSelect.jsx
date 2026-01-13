@@ -67,22 +67,6 @@ function CharacterSelect() {
 
   return (
     <div className={styles.selectionPage}>
-      <div className={styles.selectionHeader}>
-        <div className={styles.selectionHero}>
-          <h1>
-            С чего начнётся
-            <br />
-            твоя история
-          </h1>
-          <span>Каждая профессия — своя динамика кэша, расходов и кредитного лайна.</span>
-        </div>
-        <button type="button" className={styles.selectionBack} onClick={() => navigate('/')}>
-          <span aria-hidden="true" className={styles.backIcon}>
-            ←
-          </span>
-          Назад
-        </button>
-      </div>
       <Card className={styles.panelCard}>
         <div className={styles.sectionHeader}>
           <h2>Стратегия партии</h2>
