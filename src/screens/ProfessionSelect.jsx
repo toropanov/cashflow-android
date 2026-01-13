@@ -83,7 +83,14 @@ function ProfessionSelect() {
         })}
       </div>
       <div className={styles.heroDice}>
-        <GradientButton icon="🎲" rolling={rolling} onClick={handleRandom} size="compact" ariaLabel="Случайный выбор">
+        <GradientButton
+          icon="🎲"
+          rolling={rolling}
+          onClick={handleRandom}
+          size="compact"
+          ariaLabel="Случайный выбор"
+          className={styles.heroDiceButton}
+        >
           Случайный выбор
         </GradientButton>
         <p className={styles.heroDiceHint}>Генерируй случайную профессию и стартуй моментально.</p>

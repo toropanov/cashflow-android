@@ -109,6 +109,13 @@
   text-align: center;
 }
 
+.heroDiceButton {
+  background: linear-gradient(120deg, #ffe498, #ffc877);
+  color: #06060c;
+  box-shadow: 0 15px 30px #eacf9b4d;
+  border: 1px solid #12244226;
+}
+
 .selectionPage {
   min-height: 100vh;
   min-height: 100svh;
