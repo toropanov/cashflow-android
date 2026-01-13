@@ -5,5 +5,13 @@
   "bundledWebRuntime": false,
   "server": {
     "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "launchAutoHide": false,
+      "backgroundColor": "#f4f6fb",
+      "androidScaleType": "CENTER_CROP"
+    }
   }
 }

@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "cap:sync": "npx cap sync",
     "cap:android": "npx cap open android",
-    "cap:ios": "npx cap open ios"
+    "cap:ios": "npx cap open ios",
+    "generate:icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
     "@capacitor/android": "^8.0.0",
@@ -19,10 +20,12 @@
     "@capacitor/cli": "^8.0.0",
     "@capacitor/core": "^8.0.0",
     "@capacitor/ios": "^8.0.0",
+    "@capacitor/splash-screen": "^8.0.0",
     "@capacitor/status-bar": "^8.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.12.0",
+    "sharp": "^0.34.5",
     "zustand": "^5.0.9"
   },
   "devDependencies": {

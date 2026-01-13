@@ -11,6 +11,7 @@ import styles from './styles/AppShell.module.css';
 import StatusBarController from './components/StatusBarController';
 import { isNativeAndroid } from './utils/platform';
 import { App as CapacitorApp } from '@capacitor/app';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 const CONFIG_FILES = [
   { key: 'professions', path: '/config/professions.json' },
@@ -47,6 +48,11 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const bootstrapRef = useRef(useGameStore.getState().bootstrapFromConfigs);
+  const [splashHidden, setSplashHidden] = useState(false);
+
+  useEffect(() => {
+    SplashScreen.preventAutoHide().catch(() => {});
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -83,6 +89,14 @@ function App() {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!loading && !splashHidden) {
+      SplashScreen.hide()
+        .catch(() => {})
+        .finally(() => setSplashHidden(true));
+    }
+  }, [loading, splashHidden]);
 
   const initialRedirect = '/';
 
