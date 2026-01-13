@@ -470,6 +470,7 @@ const useGameStore = create(
       salaryCutMonths: 0,
       salaryCutAmount: 0,
       dealWindows: {},
+      acknowledgeOutcome: () => set(() => ({ winCondition: null, loseCondition: null })),
       salaryProgression: null,
       bootstrapFromConfigs: (bundle) =>
         set((state) => {

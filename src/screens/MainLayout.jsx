@@ -174,6 +174,11 @@ function MainLayout() {
     setTurnSummaryOpen(false);
     setTurnSummary(null);
   };
+  const acknowledgeOutcome = useGameStore((state) => state.acknowledgeOutcome);
+  const handleContinue = () => {
+    handleCloseSummary();
+    acknowledgeOutcome();
+  };
   const handleNewParty = () => {
     handleCloseSummary();
     navigate('/choose');
@@ -206,7 +211,7 @@ function MainLayout() {
       <div className={styles.outcomeFooter}>
         <Button
           variant="secondary"
-          onClick={handleCloseSummary}
+          onClick={handleContinue}
           className={styles.summaryButton}
         >
           Продолжить
@@ -222,11 +227,12 @@ function MainLayout() {
         </Button>
       </div>
     ) : (
-      <Button variant="primary" onClick={handleCloseSummary} className={styles.nextMoveButton}>
+      <Button variant="primary" onClick={handleContinue} className={styles.nextMoveButton}>
         Следующий ход
       </Button>
     );
-  const modalCloseHandler = outcomeState === 'lose' ? handleNewParty : handleCloseSummary;
+  const modalCloseHandler =
+    outcomeState === 'lose' ? handleNewParty : outcomeState === 'win' ? handleContinue : handleCloseSummary;
 
   return (
     <div className={styles.layout}>
