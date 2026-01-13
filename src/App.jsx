@@ -103,6 +103,7 @@ function App() {
     <BrowserRouter>
       <StatusBarController />
       <ScrollToTop />
+      <BackButtonHandler />
       <Routes>
         <Route path="/" element={<ProfessionSelect />} />
         <Route path="/character" element={<CharacterSelect />} />
@@ -121,6 +122,24 @@ function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname]);
+  return null;
+}
+
+function BackButtonHandler() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const handlePop = () => {
+      if (pathname === '/') {
+        window.history.pushState(null, '', '/');
+      }
+    };
+    if (pathname === '/') {
+      window.history.pushState(null, '', '/');
+    }
+    window.addEventListener('popstate', handlePop);
+    return () => window.removeEventListener('popstate', handlePop);
   }, [pathname]);
   return null;
 }

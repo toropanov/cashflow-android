@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useGameStore from '../store/gameStore';
 import Card from '../components/Card';
@@ -54,20 +54,9 @@ function CharacterSelect() {
     }, 750);
   };
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
-    const handlePop = () => {
-      if (window.location.pathname === '/character') {
-        navigate('/');
-      }
-    };
-    window.addEventListener('popstate', handlePop);
-    return () => window.removeEventListener('popstate', handlePop);
-  }, [navigate]);
-
   return (
     <div className={styles.selectionPage}>
-      <Card className={styles.panelCard}>
+      <Card className={`${styles.panelCard} ${styles.strategyCard}`}>
         <div className={styles.sectionHeader}>
           <h2>Стратегия партии</h2>
         </div>
@@ -122,7 +111,6 @@ function CharacterSelect() {
         >
           Случайный выбор
         </GradientButton>
-        <p className={styles.heroDiceHint}>Кубик тут нужен, чтобы подобрать случайного героя.</p>
       </div>
     </div>
   );
