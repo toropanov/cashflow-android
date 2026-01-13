@@ -14,6 +14,8 @@ import doctorImg from '../assets/proffesions/doctor.png';
 import fireImg from '../assets/proffesions/fire.png';
 import managerImg from '../assets/proffesions/manager.png';
 import neutralImg from '../assets/popup_neutral.png';
+import winImage from '../assets/win_ru.png';
+import failImage from '../assets/fail_ru.png';
 import Modal from '../components/Modal';
 
 function getEventMessage(event = {}) {
@@ -26,16 +28,16 @@ function getEventMessage(event = {}) {
   return raw;
 }
 
-function StatusRibbon({ win, lose }) {
-  if (!win && !lose) return null;
-  const isWin = Boolean(win);
-  const text = isWin ? `Победа: ${win.id}` : `Поражение: ${lose.id}`;
-  return (
-    <div className={`${styles.ribbon} ${isWin ? styles.win : styles.lose}`}>
-      <span>{text}</span>
-    </div>
-  );
-}
+const WIN_OUTCOME_MESSAGES = {
+  financial_independence: 'Пассивный доход выше фикс. расходов, можешь укреплять империю или начать новую партию.',
+  net_worth_1m: 'Чистый капитал превысил $1 000 000, продолжай играть или начни заново.',
+};
+
+const LOSE_OUTCOME_MESSAGES = {
+  bankruptcy: 'Нет наличных и кредитной линии — долг победил. Начни новую партию.',
+  insolvency: 'Отрицательный денежный поток и растущие проценты привели к поражению.',
+  debt_over_networth: 'Долг превысил чистый капитал, игра закончена.',
+};
 
 function MainLayout() {
   const location = useLocation();
@@ -172,6 +174,59 @@ function MainLayout() {
     setTurnSummaryOpen(false);
     setTurnSummary(null);
   };
+  const handleNewParty = () => {
+    handleCloseSummary();
+    navigate('/choose');
+  };
+
+  const hasWin = Boolean(storeData.winCondition);
+  const hasLose = Boolean(storeData.loseCondition);
+  const outcomeState = hasWin ? 'win' : hasLose ? 'lose' : null;
+  const outcomeImage =
+    outcomeState === 'win'
+      ? winImage
+      : outcomeState === 'lose'
+        ? failImage
+        : neutralImg;
+  const outcomeAlt =
+    outcomeState === 'win'
+      ? 'Победа'
+      : outcomeState === 'lose'
+        ? 'Поражение'
+        : 'Ход завершён';
+  const outcomeMessage = outcomeState === 'win'
+    ? WIN_OUTCOME_MESSAGES[storeData.winCondition?.id] ||
+      'Цель достигнута! Можешь продолжать играть или начать заново.'
+    : outcomeState === 'lose'
+      ? LOSE_OUTCOME_MESSAGES[storeData.loseCondition?.id] ||
+        'Финансовый план провалился. Начни новую партию, чтобы попробовать снова.'
+      : null;
+  const modalFooter =
+    outcomeState === 'win' ? (
+      <div className={styles.outcomeFooter}>
+        <Button
+          variant="secondary"
+          onClick={handleCloseSummary}
+          className={styles.summaryButton}
+        >
+          Продолжить
+        </Button>
+        <Button variant="primary" onClick={handleNewParty} className={styles.summaryButton}>
+          Новая партия
+        </Button>
+      </div>
+    ) : outcomeState === 'lose' ? (
+      <div className={styles.outcomeFooterSingle}>
+        <Button variant="primary" onClick={handleNewParty} className={styles.summaryButton}>
+          Новая партия
+        </Button>
+      </div>
+    ) : (
+      <Button variant="primary" onClick={handleCloseSummary} className={styles.nextMoveButton}>
+        Следующий ход
+      </Button>
+    );
+  const modalCloseHandler = outcomeState === 'lose' ? handleNewParty : handleCloseSummary;
 
   return (
     <div className={styles.layout}>
@@ -227,25 +282,6 @@ function MainLayout() {
         </button>
       </header>
       <main className={styles.content} ref={contentRef}>
-        <StatusRibbon win={storeData.winCondition} lose={storeData.loseCondition} />
-        {currentEvent && (
-          <Card
-            className={`${styles.eventCard} ${
-              currentEvent.type === 'positive'
-                ? styles.eventPositive
-                : currentEvent.type === 'negative'
-                  ? styles.eventNegative
-                  : ''
-            }`}
-          >
-            <div className={styles.eventHeader}>
-              <p className={styles.eventTitle}>{currentEvent.message || currentEvent.description}</p>
-              {typeof currentEvent.effect?.cashDelta === 'number' && (
-                <span className={styles.eventAmount}>{formatMoney(currentEvent.effect.cashDelta)}</span>
-              )}
-            </div>
-          </Card>
-        )}
         <Outlet />
       </main>
       <BottomNav
@@ -261,66 +297,76 @@ function MainLayout() {
         actionsCount={actionsCount}
       />
       <Modal
+        title="Завершение хода"
         open={turnSummaryOpen && Boolean(turnSummary)}
-        onClose={handleCloseSummary}
-        footer={
-          <Button variant="primary" onClick={handleCloseSummary} className={styles.nextMoveButton}>
-            Следующий ход
-          </Button>
-        }
+        onClose={modalCloseHandler}
+        footer={modalFooter}
       >
         {turnSummary && (
           <>
-            <div className={styles.turnIllustration}>
-              <img src={neutralImg} alt="Ход завершён" />
+            <div
+              className={`${styles.turnIllustration} ${
+                outcomeState ? styles.outcomeIllustration : ''
+              }`}
+            >
+              <img src={outcomeImage} alt={outcomeAlt} />
             </div>
-            <div className={styles.turnSummary}>
-              {turnSummary.event && (
-                <div className={styles.turnEvent}>
-                  <strong>{turnSummary.event.title}</strong>
-                  <p>{getEventMessage(turnSummary.event)}</p>
-                  {typeof turnSummary.event.effect?.cashDelta === 'number' && (
-                    <span className={styles.turnEventAmount}>{formatMoney(turnSummary.event.effect.cashDelta)}</span>
-                  )}
+            {outcomeState ? (
+              <div className={styles.outcomeContent}>
+                <h3 className={styles.outcomeTitle}>{outcomeState === 'win' ? 'Победа!' : 'Поражение'}</h3>
+                <p className={styles.outcomeDescription}>{outcomeMessage}</p>
+              </div>
+            ) : (
+              <div className={styles.turnSummary}>
+                {turnSummary.event && (
+                  <div className={styles.turnEvent}>
+                    <strong>{turnSummary.event.title}</strong>
+                    <p>{getEventMessage(turnSummary.event)}</p>
+                    {typeof turnSummary.event.effect?.cashDelta === 'number' && (
+                      <span className={styles.turnEventAmount}>
+                        {formatMoney(turnSummary.event.effect.cashDelta)}
+                      </span>
+                    )}
+                  </div>
+                )}
+                <div className={styles.turnStats}>
+                  <div>
+                    <span>Доходы</span>
+                    <strong className={styles.turnPositive}>{formatMoney(turnSummary.incomes)}</strong>
+                  </div>
+                  <div>
+                    <span>Расходы</span>
+                    <strong className={styles.turnNegative}>{formatMoney(turnSummary.expenses)}</strong>
+                  </div>
+                  <div>
+                    <span>Итог</span>
+                    <strong className={turnSummary.net >= 0 ? styles.turnPositive : styles.turnNegative}>
+                      {turnSummary.net >= 0 ? '+' : '-'}${Math.abs(turnSummary.net).toLocaleString('en-US')}
+                    </strong>
+                  </div>
                 </div>
-              )}
-              <div className={styles.turnStats}>
-                <div>
-                  <span>Доходы</span>
-                  <strong className={styles.turnPositive}>{formatMoney(turnSummary.incomes)}</strong>
-                </div>
-                <div>
-                  <span>Расходы</span>
-                  <strong className={styles.turnNegative}>{formatMoney(turnSummary.expenses)}</strong>
-                </div>
-                <div>
-                  <span>Итог</span>
-                  <strong className={turnSummary.net >= 0 ? styles.turnPositive : styles.turnNegative}>
-                    {turnSummary.net >= 0 ? '+' : '-'}${Math.abs(turnSummary.net).toLocaleString('en-US')}
-                  </strong>
+                <div className={styles.turnLog}>
+                  <span>События хода</span>
+                  <ul>
+                    {turnSummary.logs.length ? (
+                      turnSummary.logs.map((entry) => (
+                        <li
+                          key={entry.id}
+                          className={entry.type === 'market' ? styles.turnLogWarning : undefined}
+                        >
+                          <p>{entry.text}</p>
+                          {typeof entry.amount === 'number' && (
+                            <span className={styles.turnEventAmount}>{formatMoney(entry.amount)}</span>
+                          )}
+                        </li>
+                      ))
+                    ) : (
+                      <li className={styles.turnLogEmpty}>Ход прошёл без крупных событий.</li>
+                    )}
+                  </ul>
                 </div>
               </div>
-              <div className={styles.turnLog}>
-                <span>События хода</span>
-                <ul>
-                  {turnSummary.logs.length ? (
-                    turnSummary.logs.map((entry) => (
-                      <li
-                        key={entry.id}
-                        className={entry.type === 'market' ? styles.turnLogWarning : undefined}
-                      >
-                        <p>{entry.text}</p>
-                        {typeof entry.amount === 'number' && (
-                          <span className={styles.turnEventAmount}>{formatMoney(entry.amount)}</span>
-                        )}
-                      </li>
-                    ))
-                  ) : (
-                    <li className={styles.turnLogEmpty}>Ход прошёл без крупных событий.</li>
-                  )}
-                </ul>
-              </div>
-            </div>
+            )}
           </>
         )}
       </Modal>
