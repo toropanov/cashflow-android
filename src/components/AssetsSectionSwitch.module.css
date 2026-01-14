@@ -10,7 +10,9 @@
   border-radius: 0;
   padding: 0.8rem 1rem;
   background: rgba(252, 253, 255, 0.9);
-  border: 1px solid rgba(19, 40, 74, 0.12);
+  border: 1px solid transparent;
+  border-top-color: rgba(19, 40, 74, 0.12);
+  border-bottom-color: rgba(19, 40, 74, 0.12);
   text-align: left;
   display: flex;
   flex-direction: column;
