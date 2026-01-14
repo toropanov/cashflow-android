@@ -196,9 +196,7 @@ function LastTurn({ data, summary, passiveBreakdown = [] }) {
   const renderBody = () => {
     if (!data) {
       return (
-        <div className={styles.placeholder}>
-          <p>Совершай действия и переходи к следующему месяцу, чтобы увидеть динамику.</p>
-        </div>
+        <div className={styles.placeholder} />
       );
     }
     return (

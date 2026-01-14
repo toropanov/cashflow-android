@@ -163,6 +163,10 @@
   margin-top: 0.6rem;
 }
 
+.balanceStats div:last-child {
+  margin-bottom: 0.8rem;
+}
+
 .balanceStats span {
   display: block;
   font-size: 0.75rem;
