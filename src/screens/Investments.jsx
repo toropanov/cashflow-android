@@ -74,6 +74,12 @@ function InstrumentCard({
     buyLocked && lastBuyAmount
       ? `Куплено на $${Math.round(lastBuyAmount).toLocaleString('en-US')}`
       : defaultSellLabel;
+  const sellClassName =
+    buyLocked && lastBuyAmount
+      ? styles.sellPositive
+      : sellProfit >= 0
+        ? styles.sellPositive
+        : styles.sellNegative;
   const hasSaleNotice = saleData?.turn === currentMonth;
   useEffect(
     () => () => {
@@ -206,7 +212,7 @@ function InstrumentCard({
             <Button
               variant="secondary"
               onClick={() => togglePanel('sell')}
-              className={`${styles.sellButton} ${sellProfit >= 0 ? styles.sellPositive : styles.sellNegative}`}
+              className={`${styles.sellButton} ${sellClassName}`}
               disabled={sellLocked}
             >
               {sellLabel}
