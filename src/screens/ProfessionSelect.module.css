@@ -48,11 +48,13 @@
   line-height: 1.08;
   letter-spacing: -0.015em;
   color: #343d54;
-  margin: 0.4rem 0;
+  margin: 0.4rem 0 0.7rem;
 }
 
 .hero span {
   color: rgba(32, 48, 74, 0.75);
+  display: block;
+  margin: 1rem 0 0.3rem;
 }
 
 .heroActions {

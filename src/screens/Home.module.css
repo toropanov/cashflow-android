@@ -111,6 +111,7 @@
 .placeholder {
   margin: 0;
   color: rgba(22, 32, 59, 0.65);
+  font-size: 0.85rem;
 }
 
 .actionIcon {
@@ -316,7 +317,7 @@
   font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(30, 44, 74, 0.6);
+  color: #000000;
 }
 
 .infoHeader strong {

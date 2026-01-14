@@ -15,6 +15,8 @@ function CharacterSelect() {
   const currentProfessionId = useGameStore((state) => state.professionId);
   const markSettingsDirty = useGameStore((state) => state.markSettingsDirty);
   const clearSettingsDirty = useGameStore((state) => state.clearSettingsDirty);
+  const transitionState = useGameStore((state) => state.transitionState);
+  const beginTransition = useGameStore((state) => state.beginTransition);
   const [pendingProfessionId, setPendingProfessionId] = useState(currentProfessionId);
   const [pendingGoalId, setPendingGoalId] = useState(selectedGoalId);
   const [pendingDifficulty, setPendingDifficulty] = useState(difficulty);
@@ -76,8 +78,9 @@ function CharacterSelect() {
   };
 
   const handleSave = () => {
-    if (!pendingProfessionId || saving) return;
+    if (!pendingProfessionId || saving || transitionState !== 'idle') return;
     setSaving(true);
+    beginTransition('Сохраняем настройки...');
     selectProfession(pendingProfessionId, {
       goalId: pendingGoalId || selectedGoalId,
       difficulty: pendingDifficulty || difficulty,
@@ -86,7 +89,7 @@ function CharacterSelect() {
       setSaving(false);
       navigate('/');
       saveTimeoutRef.current = null;
-    }, 900);
+    }, 500);
   };
 
   const saveDisabled = !pendingProfessionId || saving;

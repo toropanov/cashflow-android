@@ -245,35 +245,58 @@ function MainLayout() {
       <div className={styles.backdrop} />
       <header className={styles.headerBar}>
         <div className={styles.headerInfo}>
-          <div className={styles.avatarWrap}>
-            {professionImage ? (
-              <img
-                src={professionImage}
-                alt={storeData.profession?.title || 'Профессия'}
-                className={styles.professionImage}
-              />
-            ) : (
-              <div
-                className={styles.professionIcon}
-                style={spriteStyle(getProfessionIcon(storeData.profession))}
-              />
-            )}
-          </div>
-          <div className={styles.headerTitle}>
-            <span className={styles.professionLabel}>Профессия</span>
-            <strong className={styles.professionTitle}>{storeData.profession?.title || 'Профиль'}</strong>
+          <div className={styles.headerProfile}>
+            <div className={styles.avatarWrap}>
+              {professionImage ? (
+                <img
+                  src={professionImage}
+                  alt={storeData.profession?.title || 'Профессия'}
+                  className={styles.professionImage}
+                />
+              ) : (
+                <div
+                  className={styles.professionIcon}
+                  style={spriteStyle(getProfessionIcon(storeData.profession))}
+                />
+              )}
+            </div>
+            <div className={styles.headerTitle}>
+              <span className={styles.professionLabel}>Профессия</span>
+              <strong className={styles.professionTitle}>{storeData.profession?.title || 'Профиль'}</strong>
+            </div>
           </div>
           <div className={styles.headerStats}>
             <div>
               <span>Наличные</span>
               <strong>{formatMoney(storeData.cash)}</strong>
             </div>
-            <div>
-              <span>Расходы</span>
-              <strong>{formatMoney(storeData.recurringExpenses)}</strong>
-            </div>
           </div>
         </div>
+        <button
+          type="button"
+          className={styles.exitButton}
+          onClick={() => {
+            if (transitionState !== 'idle') return;
+            beginTransition('Сохраняем прогресс');
+            homeTimerRef.current = setTimeout(() => {
+              navigate('/');
+              homeTimerRef.current = null;
+            }, 650);
+          }}
+          disabled={transitionState !== 'idle'}
+          title="Домой"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M4 11L12 4L20 11V20H14V14H10V20H4V11Z"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
+            <path d="M9 20V14H15V20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
       </header>
       <main className={styles.content} ref={contentRef}>
         <Outlet />
