@@ -10,12 +10,17 @@
   z-index: 99;
 }
 
+.overlayPlain {
+  background: #ffffff;
+  backdrop-filter: none;
+}
+
 .modal {
   width: min(100%, 500px);
   border-radius: 0;
   background: #ffffff;
   border: none;
-  box-shadow: 0 24px 80px rgba(8, 12, 32, 0.3);
+  box-shadow: none;
   padding: 1.5rem;
   color: #0b1024;
 }

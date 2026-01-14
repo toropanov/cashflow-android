@@ -314,10 +314,10 @@ function MainLayout() {
         actionsCount={actionsCount}
       />
       <Modal
-        title="Завершение хода"
         open={turnSummaryOpen && Boolean(turnSummary)}
         onClose={modalCloseHandler}
         footer={modalFooter}
+        hideOverlay
       >
         {turnSummary && (
           <>
@@ -335,17 +335,6 @@ function MainLayout() {
               </div>
             ) : (
               <div className={styles.turnSummary}>
-                {turnSummary.event && (
-                  <div className={styles.turnEvent}>
-                    <strong>{turnSummary.event.title}</strong>
-                    <p>{getEventMessage(turnSummary.event)}</p>
-                    {typeof turnSummary.event.effect?.cashDelta === 'number' && (
-                      <span className={styles.turnEventAmount}>
-                        {formatMoney(turnSummary.event.effect.cashDelta)}
-                      </span>
-                    )}
-                  </div>
-                )}
                 <div className={styles.turnStats}>
                   <div>
                     <span>Доходы</span>
@@ -362,6 +351,27 @@ function MainLayout() {
                     </strong>
                   </div>
                 </div>
+                {turnSummary.event && (
+                  (() => {
+                    const eventMessage = getEventMessage(turnSummary.event);
+                    const hasValue = typeof turnSummary.event.effect?.cashDelta === 'number';
+                    const sanitizedText = hasValue
+                      ? eventMessage.replace(/\$-?\d[\d,]*/g, '').trim()
+                      : eventMessage;
+                    const displayMessage = sanitizedText || eventMessage;
+                    return (
+                      <div className={styles.turnEvent}>
+                        <strong>{turnSummary.event.title}</strong>
+                        <p>{displayMessage}</p>
+                        {typeof turnSummary.event.effect?.cashDelta === 'number' && (
+                          <span className={styles.turnEventAmount}>
+                            {formatMoney(turnSummary.event.effect.cashDelta)}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })()
+                )}
                 <div className={styles.turnLog}>
                   <span>События хода</span>
                   <ul>

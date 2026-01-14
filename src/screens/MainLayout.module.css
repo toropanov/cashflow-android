@@ -276,10 +276,10 @@
 }
 
 .turnLog {
-  background: rgba(243, 247, 255, 0.85);
-  border-radius: 16px;
-  border: 1px solid rgba(25, 42, 80, 0.08);
-  padding: 0.9rem 1rem;
+  background: none;
+  border-radius: 0;
+  border: none;
+  padding: 0;
 }
 
 .turnLog span {
@@ -357,8 +357,10 @@
 }
 
 .nextMoveButton {
-  background: linear-gradient(206deg, #fff3cb, #e2d654, #e5a302) !important;
-  color: #2d1800 !important;
+  background: linear-gradient(120deg, #ffe498, #ffc877);
+  color: #06060c;
+  box-shadow: 0 15px 30px #eacf9b4d;
+  border: 1px solid #12244226;
 }
 
 .summaryButton {

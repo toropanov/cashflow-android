@@ -1,10 +1,13 @@
 import { createPortal } from 'react-dom';
 import styles from './Modal.module.css';
 
-function Modal({ open, onClose, title, children, footer }) {
+function Modal({ open, onClose, title, children, footer, hideOverlay = false }) {
   if (!open) return null;
   return createPortal(
-    <div className={styles.overlay} onClick={onClose}>
+    <div
+      className={`${styles.overlay} ${hideOverlay ? styles.overlayPlain : ''}`}
+      onClick={hideOverlay ? undefined : onClose}
+    >
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {title && (
           <header className={styles.header}>
