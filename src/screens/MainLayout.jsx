@@ -129,7 +129,7 @@ function MainLayout() {
     }
     diceTimerRef.current = setTimeout(() => {
       setDiceAnimating(false);
-    }, 1300);
+    }, 900);
   };
 
   const instrumentMap = useMemo(() => {
@@ -211,6 +211,7 @@ function MainLayout() {
     newGameTimerRef.current = setTimeout(() => {
       resetGame();
       navigate('/app');
+      completeTransition();
       newGameTimerRef.current = null;
     }, 650);
   };
@@ -248,7 +249,7 @@ function MainLayout() {
       if (typeof onFinish === 'function') {
         onFinish();
       }
-    }, 600);
+    }, 400);
   };
   const handleContinue = () => {
     if (outcomeState === 'win') {

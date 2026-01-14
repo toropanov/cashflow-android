@@ -1235,8 +1235,6 @@ const useGameStore = create(
         monthlyOfferUsed: state.monthlyOfferUsed,
         settingsDirty: state.settingsDirty,
         hideContinueAfterSettings: state.hideContinueAfterSettings,
-        transitionState: state.transitionState,
-        transitionMessage: state.transitionMessage,
       }),
     },
   ),
