@@ -76,6 +76,8 @@ function MainLayout() {
   const [nextMoveLoading, setNextMoveLoading] = useState(false);
   const transitionState = useGameStore((state) => state.transitionState);
   const beginTransition = useGameStore((state) => state.beginTransition);
+  const completeTransition = useGameStore((state) => state.completeTransition);
+  const resetGame = useGameStore((state) => state.resetGame);
 
   useEffect(() => () => {
     if (diceTimerRef.current) {
@@ -208,7 +210,7 @@ function MainLayout() {
       ? LOSE_OUTCOME_MESSAGES[storeData.loseCondition?.id] ||
         'Финансовый план провалился. Начни новую партию, чтобы попробовать снова.'
       : null;
-  const startNextMoveLoader = () => {
+  const startNextMoveLoader = (onFinish) => {
     setNextMoveLoading(true);
     if (nextMoveTimerRef.current) {
       clearTimeout(nextMoveTimerRef.current);
@@ -216,18 +218,27 @@ function MainLayout() {
     nextMoveTimerRef.current = setTimeout(() => {
       setNextMoveLoading(false);
       nextMoveTimerRef.current = null;
+      if (typeof onFinish === 'function') {
+        onFinish();
+      }
     }, 600);
   };
   const handleContinue = () => {
-    if (!outcomeState) {
-      startNextMoveLoader();
-    }
-    handleCloseSummary();
     acknowledgeOutcome();
+    handleCloseSummary();
+    beginTransition('Переходим к следующему ходу');
+    startNextMoveLoader(() => {
+      completeTransition();
+    });
   };
   const handleNewParty = () => {
     handleCloseSummary();
-    navigate('/');
+    beginTransition('Запускаем новую партию...');
+    startNextMoveLoader(() => {
+      completeTransition();
+      resetGame();
+      navigate('/');
+    });
   };
   const modalFooter =
     outcomeState === 'win' ? (
