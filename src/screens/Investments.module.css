@@ -72,6 +72,16 @@
   display: block;
 }
 
+.saleNotice {
+  width: 100%;
+  justify-content: center;
+  pointer-events: none;
+  margin-bottom: 0.2rem;
+  background: #fff;
+  color: #23c79e;
+  box-shadow: 0 15px 35px rgba(34, 207, 160, 0.35);
+}
+
 .actions {
   margin-top: 0.8rem;
   display: flex;

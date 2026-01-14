@@ -461,6 +461,7 @@ const useGameStore = create(
       dealParticipations: [],
       actionsThisTurn: 0,
       lastTradeAction: null,
+      lastSales: {},
       tradeLocks: {},
       creditLockedMonth: null,
       monthlyOfferUsed: false,
@@ -530,6 +531,7 @@ const useGameStore = create(
             difficulty: nextDifficulty,
             actionsThisTurn: 0,
             lastTradeAction: null,
+            lastSales: {},
             tradeLocks: {},
             creditLockedMonth: null,
             suppressGoalCard: false,
@@ -563,6 +565,7 @@ const useGameStore = create(
             difficulty: nextDifficulty,
             actionsThisTurn: 0,
             lastTradeAction: null,
+            lastSales: {},
             tradeLocks: {},
             creditLockedMonth: null,
             suppressGoalCard: false,
@@ -856,6 +859,7 @@ const useGameStore = create(
             salaryProgression,
             actionsThisTurn: 0,
             lastTradeAction: null,
+            lastSales: {},
             tradeLocks: {},
             creditLockedMonth: null,
             lastTurn: {
@@ -1001,10 +1005,13 @@ const useGameStore = create(
               leveragedCost,
             };
           }
+          const soldCost = (holding.costBasis || 0) * unitsToSell;
+          const profit = Math.round(netProceeds - soldCost);
+          const roundedProceeds = Math.round(netProceeds);
           const logEntry = {
             id: `sell-${instrumentId}-${Date.now()}`,
             month: state.month,
-            text: `Продано ${instrument.title} на $${Math.round(netProceeds).toLocaleString('en-US')}`,
+            text: `Продано ${instrument.title} на $${roundedProceeds.toLocaleString('en-US')}`,
           };
           const recentLog = [logEntry, ...(state.recentLog || [])].slice(0, 5);
           const updates = {
@@ -1016,6 +1023,16 @@ const useGameStore = create(
               type: 'sell',
               instrumentId,
               turn: state.month,
+              amount: roundedProceeds,
+              profit,
+            },
+            lastSales: {
+              ...(state.lastSales || {}),
+              [instrumentId]: {
+                turn: state.month,
+                amount: roundedProceeds,
+                profit,
+              },
             },
           };
           if (isLockable) {
@@ -1182,6 +1199,7 @@ const useGameStore = create(
             difficulty: state.difficulty || DEFAULT_DIFFICULTY,
             actionsThisTurn: 0,
             lastTradeAction: null,
+            lastSales: {},
             tradeLocks: {},
             creditLockedMonth: null,
           };
@@ -1224,6 +1242,7 @@ const useGameStore = create(
         salaryProgression: state.salaryProgression,
         actionsThisTurn: state.actionsThisTurn,
         lastTradeAction: state.lastTradeAction,
+        lastSales: state.lastSales,
         tradeLocks: state.tradeLocks,
         creditLockedMonth: state.creditLockedMonth,
         selectedGoalId: state.selectedGoalId,

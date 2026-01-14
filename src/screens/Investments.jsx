@@ -33,6 +33,7 @@ function InstrumentCard({
   onSell,
   currentMonth,
   tradeLocks = {},
+  saleData,
 }) {
   const rawPrice = priceInfo?.price || instrument.initialPrice;
   const changePct = Math.round((priceInfo?.lastReturn || 0) * 100);
@@ -73,7 +74,7 @@ function InstrumentCard({
     buyLocked && lastBuyAmount
       ? `Куплено на $${Math.round(lastBuyAmount).toLocaleString('en-US')}`
       : defaultSellLabel;
-
+  const hasSaleNotice = saleData?.turn === currentMonth;
   useEffect(
     () => () => {
       if (buyConfirmTimeout.current) {
@@ -105,6 +106,8 @@ function InstrumentCard({
       setPanelMode(null);
     }, 300);
   };
+
+  const formatProfitLabel = (value) => `${value >= 0 ? '+' : '-'}$${Math.abs(value).toLocaleString('en-US')}`;
 
   const renderPanel = () => {
     if (!panelMode) return null;
@@ -186,15 +189,29 @@ function InstrumentCard({
         <SparkLine data={priceInfo?.history || []} />
       </div>
       <div className={styles.actions}>
-        {hasPosition && panelMode !== 'buy' && panelMode !== 'sell' && (
+        {hasSaleNotice ? (
           <Button
-            variant="secondary"
-            onClick={() => togglePanel('sell')}
-            className={`${styles.sellButton} ${sellProfit >= 0 ? styles.sellPositive : styles.sellNegative}`}
-            disabled={sellLocked}
+            variant="primary"
+            className={styles.saleNotice}
+            onClick={(event) => event.preventDefault()}
           >
-            {sellLabel}
+            {`Продано $${(saleData?.amount || 0).toLocaleString('en-US')} (${formatProfitLabel(
+              saleData?.profit || 0,
+            )})`}
           </Button>
+        ) : (
+          hasPosition &&
+          panelMode !== 'buy' &&
+          panelMode !== 'sell' && (
+            <Button
+              variant="secondary"
+              onClick={() => togglePanel('sell')}
+              className={`${styles.sellButton} ${sellProfit >= 0 ? styles.sellPositive : styles.sellNegative}`}
+              disabled={sellLocked}
+            >
+              {sellLabel}
+            </Button>
+          )
         )}
         {panelMode !== 'buy' && panelMode !== 'sell' && !buyLocked && (
           buyDisabled ? (
@@ -251,6 +268,7 @@ function Investments() {
     sellInstrument(instrument.id, amount);
   };
 
+  const lastSales = useGameStore((state) => state.lastSales || {});
   const cards = useMemo(
     () =>
       filteredInstruments.map((instrument) => ({
@@ -329,6 +347,7 @@ function Investments() {
             onSell={(amount) => handleSell(card.instrument, amount)}
             currentMonth={month}
             tradeLocks={tradeLocks}
+            saleData={lastSales[card.instrument.id]}
           />
         ))}
       </div>
