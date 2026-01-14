@@ -12,6 +12,7 @@ import StatusBarController from './components/StatusBarController';
 import { isNativeAndroid } from './utils/platform';
 import { App as CapacitorApp } from '@capacitor/app';
 import { SplashScreen } from '@capacitor/splash-screen';
+import transitionStyles from './styles/TransitionOverlay.module.css';
 
 const CONFIG_FILES = [
   { key: 'professions', path: '/config/professions.json' },
@@ -24,8 +25,12 @@ const CONFIG_FILES = [
 
 function GuardedLayout() {
   const professionId = useGameStore((state) => state.professionId);
+  const settingsDirty = useGameStore((state) => state.settingsDirty);
   if (!professionId) {
     return <Navigate to="/" replace />;
+  }
+  if (settingsDirty) {
+    return <Navigate to="/character" replace />;
   }
   return <MainLayout />;
 }
@@ -118,6 +123,7 @@ function App() {
   return (
     <BrowserRouter>
       <StatusBarController />
+      <TransitionLayer />
       <ScrollToTop />
       <BackButtonHandler />
       <Routes>
@@ -180,6 +186,45 @@ function BackButtonHandler() {
     };
   }, [pathname]);
   return null;
+}
+
+function TransitionLayer() {
+  const location = useLocation();
+  const transitionState = useGameStore((state) => state.transitionState);
+  const completeTransition = useGameStore((state) => state.completeTransition);
+  const resetTransition = useGameStore((state) => state.resetTransition);
+  const transitionMessage = useGameStore((state) => state.transitionMessage);
+  const prevPathRef = useRef(location.pathname);
+
+  useEffect(() => {
+    if (transitionState === 'running' && location.pathname !== prevPathRef.current) {
+      completeTransition();
+    }
+    prevPathRef.current = location.pathname;
+  }, [location.pathname, transitionState, completeTransition]);
+
+  useEffect(() => {
+    if (transitionState !== 'complete') return undefined;
+    const timer = setTimeout(() => resetTransition(), 650);
+    return () => clearTimeout(timer);
+  }, [transitionState, resetTransition]);
+
+  if (transitionState === 'idle') return null;
+  const className =
+    transitionState === 'complete'
+      ? `${transitionStyles.overlay} ${transitionStyles.fadeOut}`
+      : `${transitionStyles.overlay} ${transitionStyles.fadeIn}`;
+  const message = transitionMessage || 'Готовим игру...';
+  return (
+    <div className={className}>
+      <div className={transitionStyles.loader}>
+        <div className={transitionStyles.progress}>
+          <div className={transitionStyles.progressBar} />
+        </div>
+        <p className={transitionStyles.message}>{message}</p>
+      </div>
+    </div>
+  );
 }
 
 export default App;

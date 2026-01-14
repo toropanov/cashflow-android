@@ -1,4 +1,4 @@
-import { useLayoutEffect, useEffect, useState } from 'react';
+import { useLayoutEffect, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useGameStore from '../store/gameStore';
 import GradientButton from '../components/GradientButton';
@@ -16,19 +16,41 @@ function ProfessionSelect() {
   const professionId = useGameStore((state) => state.professionId);
   const resetGame = useGameStore((state) => state.resetGame);
   const randomProfession = useGameStore((state) => state.randomProfession);
+  const settingsDirty = useGameStore((state) => state.settingsDirty);
+  const hideContinueAfterSettings = useGameStore((state) => state.hideContinueAfterSettings);
+  const transitionState = useGameStore((state) => state.transitionState);
+  const transitionMessage = useGameStore((state) => state.transitionMessage);
+  const beginTransition = useGameStore((state) => state.beginTransition);
   const [rolling, setRolling] = useState(false);
+  const transitionTimerRef = useRef(null);
 
-  const availableButtons = HERO_BUTTONS.filter((button) => !button.requiresActive || Boolean(professionId));
+  const availableButtons = HERO_BUTTONS.filter((button) => {
+    if (button.key === 'continue' && (settingsDirty || hideContinueAfterSettings)) {
+      return false;
+    }
+    return !button.requiresActive || Boolean(professionId);
+  });
   const hasContinue = availableButtons.some((button) => button.key === 'continue');
 
   const handleAction = (action) => {
     switch (action) {
       case 'continue':
-        navigate('/app');
+        if (settingsDirty) return;
+        if (transitionState !== 'idle') return;
+        beginTransition('Возвращаемся к партии...');
+        transitionTimerRef.current = setTimeout(() => {
+          navigate('/app');
+          transitionTimerRef.current = null;
+        }, 650);
         break;
       case 'newGame':
-        resetGame();
-        navigate('/app');
+        if (transitionState !== 'idle') return;
+        beginTransition('Запускаем новую партию...');
+        transitionTimerRef.current = setTimeout(() => {
+          resetGame();
+          navigate('/app');
+          transitionTimerRef.current = null;
+        }, 650);
         break;
       case 'settings':
         navigate('/character');
@@ -39,14 +61,24 @@ function ProfessionSelect() {
   };
 
   const handleRandom = () => {
-    if (rolling) return;
+    if (rolling || transitionState !== 'idle') return;
     setRolling(true);
-    randomProfession();
-    navigate('/app');
-    setTimeout(() => {
+    beginTransition('Выбираем профессию...');
+    transitionTimerRef.current = setTimeout(() => {
+      randomProfession();
+      navigate('/app');
       setRolling(false);
-    }, 750);
+      transitionTimerRef.current = null;
+    }, 650);
   };
+
+  useEffect(() => {
+    return () => {
+      if (transitionTimerRef.current) {
+        clearTimeout(transitionTimerRef.current);
+      }
+    };
+  }, []);
 
   useLayoutEffect(() => {
     if (typeof document === 'undefined') return undefined;
@@ -93,19 +125,23 @@ function ProfessionSelect() {
           <br />
           твоя история?
         </h1>
-        <span>Каждая профессия — своя динамика кэша, расходов и кредитного лайна.</span>
+        <span>Профессия. Доходы. Расходы. Каждый шаг имеет значение!</span>
       </div>
       <div className={styles.heroActions}>
         {availableButtons.map((button) => {
           const isContinue = button.key === 'continue';
           const shouldAccent = isContinue || (!hasContinue && button.key === 'newGame');
           const variantClass = shouldAccent ? styles.heroContinue : styles.heroSecondary;
+          const isBusy = transitionState !== 'idle';
+          const disabled = isBusy || (isContinue && settingsDirty);
+          const className = `${styles.heroButton} ${variantClass} ${isBusy ? styles.heroButtonPulse : ''}`;
           return (
             <button
               key={button.key}
               type="button"
-              className={`${styles.heroButton} ${variantClass}`}
+              className={className}
               onClick={() => handleAction(button.action)}
+              disabled={disabled}
             >
               {button.label}
             </button>
@@ -115,13 +151,14 @@ function ProfessionSelect() {
       <div className={styles.heroDice}>
         <GradientButton
           icon="🎲"
-          rolling={rolling}
+          rolling={rolling || transitionState === 'running'}
           onClick={handleRandom}
           size="compact"
-          ariaLabel="Случайный выбор"
+          ariaLabel="Случайная профессия"
           className={styles.heroDiceButton}
+          disabled={transitionState !== 'idle'}
         >
-          Случайный выбор
+          Случайная профессия
         </GradientButton>
       </div>
     </div>

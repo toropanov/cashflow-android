@@ -1,7 +1,8 @@
 .screen {
+  --asset-section-gap: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--asset-section-gap);
   padding-bottom: 6rem;
 }
 
@@ -13,7 +14,7 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--asset-section-gap);
 }
 
 .instrumentCard {
@@ -78,8 +79,8 @@
 
 .tradePanel {
   margin-top: 0.8rem;
-  padding: 0.8rem;
-  background: rgba(243, 247, 255, 0.7);
+  padding: 0;
+  background: transparent;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -126,6 +127,19 @@
   color: rgba(32, 48, 85, 0.65);
 }
 
+.tradeBadge {
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: rgba(243, 246, 255, 0.9);
+  color: #0f2446;
+  font-weight: 600;
+  text-align: center;
+  flex: 1;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.8),
+    0 14px 30px rgba(40, 66, 111, 0.2);
+}
+
 .sellButton {
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 12px 25px rgba(30, 47, 83, 0.15);
@@ -150,6 +164,7 @@
 
 .creditCard {
   background: rgba(255, 255, 255, 0.88);
+  margin-bottom: var(--asset-section-gap);
 }
 
 .creditCard :global(.inner) {
@@ -209,6 +224,12 @@
 .creditActionColumn button {
   width: 100%;
   padding: 0.85rem 0;
+}
+
+.creditTakenButton {
+  box-shadow: 0 15px 35px #22cfa059;
+  background: linear-gradient(120deg, #ffffff8c, transparent 60%);
+  color: #23c79e;
 }
 
 .creditActionColumn button span {

@@ -466,6 +466,11 @@ const useGameStore = create(
       monthlyOfferUsed: false,
       selectedGoalId: null,
       difficulty: DEFAULT_DIFFICULTY,
+      settingsDirty: false,
+      hideContinueAfterSettings: false,
+      transitionState: 'idle',
+      transitionMessage: '',
+      transitionState: 'idle',
       joblessMonths: 0,
       salaryCutMonths: 0,
       salaryCutAmount: 0,
@@ -516,6 +521,8 @@ const useGameStore = create(
           );
           return {
             ...base,
+            settingsDirty: false,
+            hideContinueAfterSettings: true,
             availableActions: actionRoll.actions,
             rngSeed: actionRoll.seed,
             selectedGoalId: nextGoalId,
@@ -546,6 +553,8 @@ const useGameStore = create(
               { ...state, selectedGoalId: nextGoalId, difficulty: nextDifficulty },
               profession,
             ),
+            settingsDirty: false,
+            hideContinueAfterSettings: false,
             availableActions: actionRoll.actions,
             rngSeed: actionRoll.seed,
             selectedGoalId: nextGoalId,
@@ -559,6 +568,12 @@ const useGameStore = create(
       setSelectedGoal: (goalId) => set(() => ({ selectedGoalId: goalId })),
       setDifficulty: (level = DEFAULT_DIFFICULTY) =>
         set(() => ({ difficulty: level || DEFAULT_DIFFICULTY })),
+      markSettingsDirty: () => set(() => ({ settingsDirty: true })),
+      clearSettingsDirty: () => set(() => ({ settingsDirty: false })),
+      beginTransition: (message = '') =>
+        set(() => ({ transitionState: 'running', transitionMessage: message })),
+      completeTransition: () => set(() => ({ transitionState: 'complete' })),
+      resetTransition: () => set(() => ({ transitionState: 'idle', transitionMessage: '' })),
       advanceMonth: () =>
         set((state) => {
           if (!state.profession || !state.configsReady) return {};
@@ -1152,6 +1167,8 @@ const useGameStore = create(
           return {
             ...state,
             ...base,
+            settingsDirty: false,
+            hideContinueAfterSettings: false,
             availableActions: roll.actions,
             rngSeed: roll.seed,
             configs: state.configs,
@@ -1211,6 +1228,10 @@ const useGameStore = create(
         salaryCutAmount: state.salaryCutAmount,
         creditBucket: state.creditBucket,
         monthlyOfferUsed: state.monthlyOfferUsed,
+        settingsDirty: state.settingsDirty,
+        hideContinueAfterSettings: state.hideContinueAfterSettings,
+        transitionState: state.transitionState,
+        transitionMessage: state.transitionMessage,
       }),
     },
   ),

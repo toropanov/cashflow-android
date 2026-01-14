@@ -529,29 +529,33 @@ function Home() {
           </ul>
         </Card>
       )}
-      {monthlyOffers[0] && (
-        <div className={styles.monthlyOffer}>
-          <ActionCard
-            action={monthlyOffers[0]}
-            cash={cash}
-            compact
-            variant="monthly"
-            onSelect={(id) => applyHomeAction(id, { fromMonthly: true })}
-            hideIcon
-          />
-        </div>
-      )}
-      {visibleActiveOffers.length > 0 && (
-        <div className={styles.activeOffers}>
-          <div className={styles.activeOffersHeader}>Активные предложения</div>
-          <div className={styles.activeOfferList}>
-            {visibleActiveOffers.map((offer) => (
-              <span key={offer.id}>
-                {offer.title}
-                <small>ещё {Math.max(0, offer.expiresMonth - month)} мес.</small>
-              </span>
-            ))}
-          </div>
+      {(monthlyOffers[0] || visibleActiveOffers.length > 0) && (
+        <div className={styles.monthlySection}>
+          {monthlyOffers[0] && (
+            <div className={styles.monthlyOffer}>
+              <ActionCard
+                action={monthlyOffers[0]}
+                cash={cash}
+                compact
+                variant="monthly"
+                onSelect={(id) => applyHomeAction(id, { fromMonthly: true })}
+                hideIcon
+              />
+            </div>
+          )}
+          {visibleActiveOffers.length > 0 && (
+            <div className={styles.activeOffers}>
+              <div className={styles.activeOffersHeader}>Активные предложения</div>
+              <div className={styles.activeOfferList}>
+                {visibleActiveOffers.map((offer) => (
+                  <span key={offer.id}>
+                    {offer.title}
+                    <small>ещё {Math.max(0, offer.expiresMonth - month)} мес.</small>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

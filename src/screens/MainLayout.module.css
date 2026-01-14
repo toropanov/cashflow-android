@@ -53,17 +53,20 @@
   align-items: center;
   gap: 0.8rem;
   flex: 1;
+  flex-wrap: wrap;
 }
 
 .avatarWrap {
   display: flex;
   align-items: flex-end;
+  flex: 0 0 auto;
 }
 
 .headerTitle {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  min-width: 0;
 }
 
 .professionImage {
@@ -99,6 +102,8 @@
   display: flex;
   align-items: flex-end;
   gap: 1rem;
+  flex: 1 1 140px;
+  min-width: 0;
 }
 
 .headerStats span {
@@ -382,6 +387,11 @@
   .outcomeFooter,
   .outcomeFooterSingle {
     flex-direction: column;
+  }
+
+  .headerStats {
+    width: 100%;
+    justify-content: space-between;
   }
 }
 

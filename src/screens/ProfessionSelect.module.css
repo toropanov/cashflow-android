@@ -87,6 +87,33 @@
   transform: translateY(1px);
 }
 
+.heroButtonPulse {
+  position: relative;
+  overflow: hidden;
+}
+
+.heroButtonPulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+  transform: translateX(-100%);
+  animation: heroButtonWave 0.9s linear infinite;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@keyframes heroButtonWave {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.heroButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .heroSecondary {
   background: #ffffff;
   border: 1px solid rgba(18, 36, 66, 0.15);
@@ -287,6 +314,16 @@
   color: #070a17;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 0;
+  border: 1px solid rgba(24, 44, 78, 0.12);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  cursor: pointer;
+}
+
+.profCardSelected,
+.profCard.profCardSelected {
+  border-color: #548bff73;
+  box-shadow: 0 12px 25px #548bff33;
+  background: #ecf4fff2;
 }
 
 .profCard :global(.inner) {
@@ -303,6 +340,10 @@
   gap: 0.9rem;
   margin-bottom: 12px;
   border-bottom: 1px solid #f1f1f1;
+}
+
+.profCardSelected .summaryRow {
+  border-bottom-color: rgba(84, 139, 255, 0.25);
 }
 
 .profCard h3 {

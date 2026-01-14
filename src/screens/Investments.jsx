@@ -116,7 +116,7 @@ function InstrumentCard({
     const disabled = isBuy ? buyDisabled : !hasPosition;
     const displayAmount = amount || LOT_STEP;
     return (
-      <div className={styles.tradePanel}>
+        <div className={styles.tradePanel}>
         <div className={styles.tradeValue}>
           <span>{isBuy ? 'Сумма покупки' : 'Сумма продажи'}</span>
           <strong>${displayAmount.toLocaleString('en-US')}</strong>
@@ -196,10 +196,14 @@ function InstrumentCard({
             {sellLabel}
           </Button>
         )}
-        {panelMode !== 'buy' && (
-          <Button variant="primary" onClick={() => togglePanel('buy')} disabled={buyDisabled || buyLocked}>
-            Купить
-          </Button>
+        {panelMode !== 'buy' && !buyLocked && (
+          buyDisabled ? (
+            <div className={styles.tradeBadge}>Недостаточно средств</div>
+          ) : (
+            <Button variant="primary" onClick={() => togglePanel('buy')}>
+              Купить
+            </Button>
+          )
         )}
       </div>
       {renderPanel()}
@@ -223,6 +227,7 @@ function Investments() {
   const loanRules = useGameStore((state) => state.configs?.rules?.loans);
   const [creditAmount, setCreditAmount] = useState(1000);
   const [creditConfirm, setCreditConfirm] = useState(null);
+  const [lastDrawAmount, setLastDrawAmount] = useState(null);
   const creditConfirmRef = useRef(null);
   const month = useGameStore((state) => state.month);
   const tradeLocks = useGameStore((state) => state.tradeLocks || {});
@@ -284,6 +289,7 @@ function Investments() {
     const amount = Math.min(creditAmount, Math.max(availableCredit, 0));
     if (amount <= 0 || creditLocked) return;
     drawCredit(amount);
+    setLastDrawAmount(amount);
     flashCreditConfirm('draw');
   };
 
@@ -375,8 +381,13 @@ function Investments() {
               variant="primary"
               onClick={handleDrawCredit}
               disabled={availableCredit <= 0 || creditLocked}
+              className={creditLocked && lastDrawAmount ? styles.creditTakenButton : ''}
             >
-              {creditConfirm === 'draw' ? 'Готово' : `Взять ${formatUSD(creditAmount)}`}
+              {creditConfirm === 'draw'
+                ? 'Готово'
+                : creditLocked && lastDrawAmount
+                ? `Взято ${formatUSD(lastDrawAmount)}`
+                : `Взять ${formatUSD(creditAmount)}`}
             </Button>
             {estimatedPayment && (
               <small className={styles.paymentHint}>
@@ -384,15 +395,17 @@ function Investments() {
               </small>
             )}
           </div>
-          <div className={styles.creditActionColumn}>
-            <Button
-              variant="danger"
-              onClick={handleRepay}
-              disabled={debt <= 0 || cash <= 0 || creditLocked}
-            >
-              {creditConfirm === 'repay' ? 'Готово' : `Погасить ${formatUSD(creditAmount)}`}
-            </Button>
-          </div>
+          {debt > 0 && !creditLocked && (
+            <div className={styles.creditActionColumn}>
+              <Button
+                variant="danger"
+                onClick={handleRepay}
+                disabled={cash <= 0 || creditLocked}
+              >
+                {creditConfirm === 'repay' ? 'Готово' : `Погасить ${formatUSD(creditAmount)}`}
+              </Button>
+            </div>
+          )}
         </div>
       </Card>
     </div>

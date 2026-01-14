@@ -71,10 +71,16 @@ function MainLayout() {
   const confirmButtonRef = useRef(null);
   const contentRef = useRef(null);
   const diceTimerRef = useRef(null);
+  const homeTimerRef = useRef(null);
+  const transitionState = useGameStore((state) => state.transitionState);
+  const beginTransition = useGameStore((state) => state.beginTransition);
 
   useEffect(() => () => {
     if (diceTimerRef.current) {
       clearTimeout(diceTimerRef.current);
+    }
+    if (homeTimerRef.current) {
+      clearTimeout(homeTimerRef.current);
     }
   }, []);
 
@@ -271,19 +277,26 @@ function MainLayout() {
         <button
           type="button"
           className={styles.exitButton}
-          onClick={() => navigate('/')}
-          title="Сменить роль"
+          onClick={() => {
+            if (transitionState !== 'idle') return;
+            beginTransition('Сохраняем прогресс');
+            homeTimerRef.current = setTimeout(() => {
+              navigate('/');
+              homeTimerRef.current = null;
+            }, 650);
+          }}
+          disabled={transitionState !== 'idle'}
+          title="Дом"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <path
-              d="M5 7H19L18 21H6L5 7Z"
+              d="M4 11L12 4L20 11V20H14V14H10V20H4V11Z"
               stroke="#1f2d4a"
               strokeWidth="1.8"
               strokeLinejoin="round"
+              strokeLinecap="round"
             />
-            <path d="M9 7V4H15V7" stroke="#1f2d4a" strokeWidth="1.8" strokeLinecap="round" />
-            <path d="M10 11V18" stroke="#1f2d4a" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M14 11V18" stroke="#1f2d4a" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M9 20V14H15V20" stroke="#1f2d4a" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         </button>
       </header>

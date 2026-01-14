@@ -4,7 +4,7 @@ import { PROFESSION_IMAGES } from '../utils/professionImages';
 
 const formatMoney = (value) => `$${Math.round(value || 0).toLocaleString('en-US')}`;
 
-function ProfessionCard({ profession, onSelect }) {
+function ProfessionCard({ profession, onSelect, isSelected = false }) {
   const stats = [
     { label: 'Зарплата', value: `${formatMoney(profession.salaryMonthly)}/мес` },
     { label: 'Наличные', value: formatMoney(profession.startingMoney) },
@@ -13,8 +13,9 @@ function ProfessionCard({ profession, onSelect }) {
   ];
   const startingDebt = profession.startingDebt || 0;
   const avatarSrc = PROFESSION_IMAGES[profession.id];
+  const cardClasses = [styles.profCard, isSelected ? styles.profCardSelected : ''].filter(Boolean).join(' ');
   return (
-    <Card className={styles.profCard} onClick={() => onSelect(profession.id)}>
+    <Card className={cardClasses} onClick={() => onSelect?.(profession.id)}>
       <div className={styles.summaryRow}>
         <div className={styles.avatar}>{avatarSrc ? <img src={avatarSrc} alt={profession.title} /> : <span>{profession.title.slice(0, 1)}</span>}</div>
         <div>

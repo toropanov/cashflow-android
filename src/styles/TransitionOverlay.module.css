@@ -1,0 +1,92 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #e6ebf5;
+  z-index: 1200;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 0;
+  filter: drop-shadow(0 8px 15px rgba(31, 43, 74, 0.3));
+  min-height: 100vh;
+  padding: 0 1rem;
+}
+
+.fadeIn {
+  animation: fadeInOverlay 0.25s ease forwards;
+  animation-fill-mode: forwards;
+}
+
+.fadeOut {
+  animation: fadeOutOverlay 0.25s ease forwards;
+  animation-fill-mode: forwards;
+}
+
+.loader {
+  text-align: center;
+  color: #1f2b4a;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.progress {
+  width: 100%;
+  max-width: 960px;
+  height: 0.4rem;
+  background: #e8edf8;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressBar {
+  position: absolute;
+  inset: 0;
+  width: 30%;
+  background: #ffcd7d;
+  animation: progressSlide 1.2s ease-in-out infinite;
+}
+
+.message {
+  font-size: 1rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutOverlay {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes progressSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

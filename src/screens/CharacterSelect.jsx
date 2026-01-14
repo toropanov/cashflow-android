@@ -1,8 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useGameStore from '../store/gameStore';
 import Card from '../components/Card';
-import GradientButton from '../components/GradientButton';
 import ProfessionCard from '../components/ProfessionCard';
 import styles from './ProfessionSelect.module.css';
 import { DIFFICULTY_OPTIONS, summarizeGoal } from '../utils/goals';
@@ -13,18 +12,17 @@ function CharacterSelect() {
   const selectProfession = useGameStore((state) => state.selectProfession);
   const selectedGoalId = useGameStore((state) => state.selectedGoalId);
   const difficulty = useGameStore((state) => state.difficulty);
-  const setSelectedGoal = useGameStore((state) => state.setSelectedGoal);
-  const setDifficulty = useGameStore((state) => state.setDifficulty);
-  const randomProfession = useGameStore((state) => state.randomProfession);
-  const [rolling, setRolling] = useState(false);
+  const currentProfessionId = useGameStore((state) => state.professionId);
+  const markSettingsDirty = useGameStore((state) => state.markSettingsDirty);
+  const clearSettingsDirty = useGameStore((state) => state.clearSettingsDirty);
+  const [pendingProfessionId, setPendingProfessionId] = useState(currentProfessionId);
+  const [pendingGoalId, setPendingGoalId] = useState(selectedGoalId);
+  const [pendingDifficulty, setPendingDifficulty] = useState(difficulty);
+  const [saving, setSaving] = useState(false);
+  const saveTimeoutRef = useRef(null);
   const winRules = useGameStore((state) => state.configs?.rules?.win || []);
 
-  const orderedProfessions = useMemo(
-    () => [...professions].sort((a, b) => a.salaryMonthly - b.salaryMonthly),
-    [professions],
-  );
-
-  const strategyLabel = summarizeGoal(winRules.find((rule) => rule.id === selectedGoalId)).title;
+  const orderedProfessions = useMemo(() => [...professions].sort((a, b) => a.salaryMonthly - b.salaryMonthly), [professions]);
 
   const goalButtons = useMemo(
     () =>
@@ -39,20 +37,59 @@ function CharacterSelect() {
     [winRules],
   );
 
+  useEffect(() => {
+    setPendingGoalId(selectedGoalId);
+  }, [selectedGoalId]);
+
+  useEffect(() => {
+    setPendingDifficulty(difficulty);
+  }, [difficulty]);
+
+  useEffect(() => {
+    setPendingProfessionId(currentProfessionId);
+  }, [currentProfessionId]);
+
+  const hasPendingChanges =
+    pendingProfessionId !== currentProfessionId ||
+    pendingGoalId !== selectedGoalId ||
+    pendingDifficulty !== difficulty;
+
+  useEffect(() => {
+    if (hasPendingChanges) {
+      markSettingsDirty();
+    } else {
+      clearSettingsDirty();
+    }
+  }, [hasPendingChanges, markSettingsDirty, clearSettingsDirty]);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+        saveTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
   const handleSelect = (professionId) => {
-    selectProfession(professionId, { goalId: selectedGoalId, difficulty });
-    navigate('/');
+    setPendingProfessionId(professionId);
   };
 
-  const handleRandom = () => {
-    if (rolling) return;
-    setRolling(true);
-    randomProfession();
-    navigate('/');
-    setTimeout(() => {
-      setRolling(false);
-    }, 750);
+  const handleSave = () => {
+    if (!pendingProfessionId || saving) return;
+    setSaving(true);
+    selectProfession(pendingProfessionId, {
+      goalId: pendingGoalId || selectedGoalId,
+      difficulty: pendingDifficulty || difficulty,
+    });
+    saveTimeoutRef.current = setTimeout(() => {
+      setSaving(false);
+      navigate('/');
+      saveTimeoutRef.current = null;
+    }, 900);
   };
+
+  const saveDisabled = !pendingProfessionId || saving;
 
   return (
     <div className={styles.selectionPage}>
@@ -65,8 +102,8 @@ function CharacterSelect() {
             <button
               key={rule.id}
               type="button"
-              className={`${styles.optionButton} ${selectedGoalId === rule.id ? styles.optionButtonActive : ''}`}
-              onClick={() => setSelectedGoal(rule.id)}
+              className={`${styles.optionButton} ${pendingGoalId === rule.id ? styles.optionButtonActive : ''}`}
+              onClick={() => setPendingGoalId(rule.id)}
             >
               <strong>{rule.label}</strong>
               <small>{rule.detail}</small>
@@ -83,8 +120,8 @@ function CharacterSelect() {
             <button
               key={option.id}
               type="button"
-              className={`${styles.optionButton} ${difficulty === option.id ? styles.optionButtonActive : ''}`}
-              onClick={() => setDifficulty(option.id)}
+              className={`${styles.optionButton} ${pendingDifficulty === option.id ? styles.optionButtonActive : ''}`}
+              onClick={() => setPendingDifficulty(option.id)}
             >
               <strong>{option.label}</strong>
               <small>{option.description}</small>
@@ -97,20 +134,20 @@ function CharacterSelect() {
           <ProfessionCard
             key={profession.id}
             profession={profession}
+            isSelected={pendingProfessionId === profession.id}
             onSelect={() => handleSelect(profession.id)}
           />
         ))}
       </div>
       <div className={styles.diceSection}>
-        <GradientButton
-          icon="🎲"
-          rolling={rolling}
-          onClick={handleRandom}
-          size="compact"
-          ariaLabel="Случайный выбор"
+        <button
+          type="button"
+          className={`${styles.heroButton} ${styles.heroContinue} ${styles.settingsSaveButton}`}
+          onClick={handleSave}
+          disabled={saveDisabled}
         >
-          Случайный выбор
-        </GradientButton>
+          <span>{saving ? 'Сохраняем...' : 'Сохранить'}</span>
+        </button>
         <div className={styles.diceBottomGap} />
       </div>
     </div>
