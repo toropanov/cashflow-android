@@ -73,6 +73,7 @@ function MainLayout() {
   const contentRef = useRef(null);
   const diceTimerRef = useRef(null);
   const homeTimerRef = useRef(null);
+  const newGameTimerRef = useRef(null);
   const nextMoveTimerRef = useRef(null);
   const [nextMoveLoading, setNextMoveLoading] = useState(false);
   const [hideProgressCard, setHideProgressCard] = useState(false);
@@ -90,6 +91,9 @@ function MainLayout() {
     }
     if (nextMoveTimerRef.current) {
       clearTimeout(nextMoveTimerRef.current);
+    }
+    if (newGameTimerRef.current) {
+      clearTimeout(newGameTimerRef.current);
     }
   }, []);
 
@@ -197,6 +201,19 @@ function MainLayout() {
     setTurnSummary(null);
     setMaskTurnResults(false);
   };
+  const handleNewGameFromVictory = () => {
+    if (transitionState !== 'idle') return;
+    handleCloseSummary();
+    beginTransition('Запускаем новую партию...');
+    if (newGameTimerRef.current) {
+      clearTimeout(newGameTimerRef.current);
+    }
+    newGameTimerRef.current = setTimeout(() => {
+      resetGame();
+      navigate('/app');
+      newGameTimerRef.current = null;
+    }, 650);
+  };
   const acknowledgeOutcome = useGameStore((state) => state.acknowledgeOutcome);
   const hasWin = Boolean(storeData.winCondition);
   const hasLose = Boolean(storeData.loseCondition);
@@ -259,16 +276,16 @@ function MainLayout() {
         <Button
           variant="secondary"
           onClick={handleContinue}
-          className={`${styles.summaryButton} ${styles.outcomePrimary}`}
+          className={`${styles.summaryButton} ${styles.outcomeContinue}`}
         >
           Продолжить
         </Button>
         <Button
           variant="primary"
-          onClick={handleNewParty}
+          onClick={handleNewGameFromVictory}
           className={`${styles.summaryButton} ${styles.outcomePrimary}`}
         >
-          Новая партия
+          Новая игра
         </Button>
       </div>
     ) : outcomeState === 'lose' ? (

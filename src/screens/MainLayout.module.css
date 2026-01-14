@@ -463,6 +463,13 @@
   flex: 1;
 }
 
+.outcomeContinue {
+  background: #fff;
+  border: 1px solid rgba(18, 36, 66, 0.15);
+  color: #122442;
+  box-shadow: none;
+}
+
 @media (max-width: 480px) {
   .outcomeFooter,
   .outcomeFooterSingle {
