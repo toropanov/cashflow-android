@@ -1128,8 +1128,25 @@ const useGameStore = create(
         }),
       resetGame: () =>
         set((state) => {
-          if (!state.profession) return {};
-          const base = buildProfessionState(state, state.profession);
+          let profession = state.profession;
+          if (
+            !profession &&
+            state.professionId &&
+            state.configs?.professions
+          ) {
+            profession = getProfessionById(
+              state.configs.professions,
+              state.professionId,
+            );
+          }
+          if (!profession) {
+            const list = state.configs?.professions?.professions || [];
+            if (!list.length) {
+              return {};
+            }
+            profession = list[0];
+          }
+          const base = buildProfessionState(state, profession);
           const homeActionList = getHomeActions(state.configs);
           const roll = rollMonthlyActions(state.rngSeed || ensureStoredSeed(), homeActionList);
           return {
