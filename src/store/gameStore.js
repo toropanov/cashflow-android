@@ -468,6 +468,7 @@ const useGameStore = create(
       difficulty: DEFAULT_DIFFICULTY,
       settingsDirty: false,
       hideContinueAfterSettings: false,
+      suppressGoalCard: false,
       transitionState: 'idle',
       transitionMessage: '',
       transitionState: 'idle',
@@ -531,6 +532,7 @@ const useGameStore = create(
             lastTradeAction: null,
             tradeLocks: {},
             creditLockedMonth: null,
+            suppressGoalCard: false,
           };
         }),
       randomProfession: (prefs = {}) =>
@@ -563,6 +565,7 @@ const useGameStore = create(
             lastTradeAction: null,
             tradeLocks: {},
             creditLockedMonth: null,
+            suppressGoalCard: false,
           };
         }),
       setSelectedGoal: (goalId) => set(() => ({ selectedGoalId: goalId })),
@@ -570,6 +573,8 @@ const useGameStore = create(
         set(() => ({ difficulty: level || DEFAULT_DIFFICULTY })),
       markSettingsDirty: () => set(() => ({ settingsDirty: true })),
       clearSettingsDirty: () => set(() => ({ settingsDirty: false })),
+      suppressGoalCard: () => set(() => ({ suppressGoalCard: true })),
+      resetGoalCardSuppression: () => set(() => ({ suppressGoalCard: false })),
       beginTransition: (message = '') =>
         set(() => ({ transitionState: 'running', transitionMessage: message })),
       completeTransition: () => set(() => ({ transitionState: 'complete' })),

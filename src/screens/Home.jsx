@@ -424,6 +424,7 @@ function Home() {
   const winRules = configs?.rules?.win || [];
   const selectedGoalId = useGameStore((state) => state.selectedGoalId);
   const difficulty = useGameStore((state) => state.difficulty || 'normal');
+  const hideGoalCard = useGameStore((state) => state.suppressGoalCard);
   const difficultyLabels = {
     easy: 'Лёгкий',
     normal: 'Стандарт',
@@ -501,7 +502,7 @@ function Home() {
           </div>
         )}
       </Card>
-      {goalRows.length > 0 && (
+      {!hideGoalCard && goalRows.length > 0 && (
         <Card className={styles.goalCard}>
           <div className={styles.goalHeader}>
             <span>Прогресс партии</span>

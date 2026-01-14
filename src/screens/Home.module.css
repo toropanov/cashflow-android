@@ -15,24 +15,22 @@
 }
 
 .eventCard {
-  background: rgba(255, 255, 255, 0.92);
+  background: #ffffff;
   color: #182336;
+  border: 1px solid transparent;
+  box-shadow: 0 12px 25px rgba(3, 6, 16, 0.12);
 }
 
 .eventPositive {
-  border-color: rgba(109, 209, 172, 0.5);
+  border-color: #44ad5536;
+  box-shadow: 0 12px 25px #4ec46033;
+  background: #f7fef8a1;
 }
 
 .eventNegative {
-  border-color: rgba(247, 162, 182, 0.55);
-}
-
-.eventPositive {
-  border-color: rgba(109, 209, 172, 0.5);
-}
-
-.eventNegative {
-  border-color: rgba(247, 162, 182, 0.55);
+  border-color: #ad44444f;
+  box-shadow: 0 12px 25px #c44e4e17;
+  background: #fef1f4a1;
 }
 
 .eventHeader {
@@ -42,7 +40,7 @@
 }
 
 .eventHeader .iconSprite {
-  margin-bottom: 0;
+  display: none;
 }
 
 .eventTitle {

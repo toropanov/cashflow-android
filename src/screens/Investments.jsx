@@ -149,7 +149,7 @@ function InstrumentCard({
               }
             }}
             disabled={disabled || buyConfirmed}
-            className={`${styles.tradeActionButton} ${buyConfirmed && isBuy ? styles.buyConfirming : ''}`}
+            className={`${styles.tradeActionButton} ${buyConfirmed && isBuy ? styles.buyConfirming : ''} ${!isBuy ? styles.tradeSellConfirm : ''}`}
           >
             {isBuy
               ? buyConfirmed
@@ -185,8 +185,8 @@ function InstrumentCard({
       <div className={styles.sparkline}>
         <SparkLine data={priceInfo?.history || []} />
       </div>
-      <div className={`${styles.actions} ${buyConfirmed ? styles.actionsHidden : ''}`}>
-        {hasPosition && panelMode !== 'sell' && (
+      <div className={styles.actions}>
+        {hasPosition && panelMode !== 'buy' && panelMode !== 'sell' && (
           <Button
             variant="secondary"
             onClick={() => togglePanel('sell')}
@@ -196,7 +196,7 @@ function InstrumentCard({
             {sellLabel}
           </Button>
         )}
-        {panelMode !== 'buy' && !buyLocked && (
+        {panelMode !== 'buy' && panelMode !== 'sell' && !buyLocked && (
           buyDisabled ? (
             <div className={styles.tradeBadge}>Недостаточно средств</div>
           ) : (

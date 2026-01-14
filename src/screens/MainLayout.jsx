@@ -74,6 +74,7 @@ function MainLayout() {
   const homeTimerRef = useRef(null);
   const nextMoveTimerRef = useRef(null);
   const [nextMoveLoading, setNextMoveLoading] = useState(false);
+  const [hideProgressCard, setHideProgressCard] = useState(false);
   const transitionState = useGameStore((state) => state.transitionState);
   const beginTransition = useGameStore((state) => state.beginTransition);
   const completeTransition = useGameStore((state) => state.completeTransition);
@@ -224,6 +225,9 @@ function MainLayout() {
     }, 600);
   };
   const handleContinue = () => {
+    if (outcomeState === 'win') {
+      setHideProgressCard(true);
+    }
     acknowledgeOutcome();
     handleCloseSummary();
     beginTransition('Переходим к следующему ходу');
