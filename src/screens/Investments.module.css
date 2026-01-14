@@ -3,7 +3,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--asset-section-gap);
-  padding-bottom: 6rem;
+  padding-top: var(--asset-section-gap);
+  padding-bottom: 0;
 }
 
 .screen header h2 {
@@ -164,7 +165,7 @@
 
 .creditCard {
   background: rgba(255, 255, 255, 0.88);
-  margin-bottom: 0;
+  margin-bottom: 1.5rem;
 }
 
 .creditCard :global(.inner) {
